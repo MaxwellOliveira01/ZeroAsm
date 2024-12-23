@@ -9,36 +9,28 @@
 #define dbg debug()
 
 #include <bits/stdc++.h>
-#define ff first
-#define ss second
-#define pb push_back
+#include "code/preprocess.cpp"
 
 using namespace std;
-using ll = long long;
-using ld = long double;
-using pii = pair<int,int>;
-using vi = vector<int>;
 
-using tii = tuple<int,int,int>;
-// auto [a,b,c] = ...
-// .insert({a,b,c})
+int main(int argc, char *argv[]) {
 
-const int oo = (int)1e9 + 5; //INF to INT
-const ll OO = 0x3f3f3f3f3f3f3f3fLL; //INF to LL
+    // ./montador < input.asm > input.pre
+    // ./montador < input.pre > input.obj
 
-void solve() {
-    
-}
+    // if(argc != 2) {
+    //     cout << "Usage: ./montador <input_file.asm> or ./montador <input_file.pre>\n"; ;
+    //     return 1;
+    // }
 
-int32_t main() {
-    ios::sync_with_stdio(false);
-    cin.tie(NULL);
+    auto preProcess = preProcessFile(argv[1]);
 
-    int t = 1;
-    //cin >> t;
-
-    while(t--) {
-        solve();
+    for(auto &line : preProcess) {
+        debug(line);
     }
+
+    // TODO: mover section de data para o final do arquivo (se necessario)
+
+    return 0;
 
 }
