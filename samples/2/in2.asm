@@ -7,7 +7,7 @@ Public OLD_DATA
  Public TMP_DATA
 
 ;comentario 3
-
+TRES: COPY   DOIS, TMP_DATA
 INPUT OLD_DATA
  LOAD OLD_DATA
     jmp mod2; comentario 4
