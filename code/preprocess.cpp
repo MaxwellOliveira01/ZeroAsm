@@ -11,23 +11,107 @@
 #include <bits/stdc++.h>
 using namespace std;
 
+#include<memory>
+
 // TODO: fix name conventions
 
-// enum DataType {
-//     SPACE,
-//     CONST,
-// };
+enum DirectiveType {
+    SPACE,
+    CONST,
+};
 
-struct Data {
+struct Directives { // abstract
+    string label;
+    DirectiveType type;
+    virtual ~Directives() = default;
+    virtual string toString() = 0;
+};
 
-    Data() = default;
+struct ConstDirective : Directives {
+    
+    // TODO: change it to int
+    string value; // needs to handle decimal, hexadecimal and binary
 
-    Data(vector<string>& lines) {
+    ConstDirective(string label_, string value_) {
+        label = label_;
+        value = value_;
+        type = CONST;
+    };
 
+    string toString() {
+        return label + ": CONST " + value;
+    }
+
+};
+
+struct SpaceDirective : Directives {
+
+    string value; // str?
+
+    SpaceDirective(string label_, string value_) {
+        label = label_;
+        value = value_;
+        type = SPACE;
+    }
+
+    SpaceDirective(string label_) {
+        label = label_;
+        value = "";
+        type = SPACE;
     }
 
     string toString() {
-        return "";        
+        auto s = label + ": SPACE";
+        
+        if((int)value.size()) {
+            s += " " + value;
+        }
+
+        return s;
+    }
+    
+};
+
+string toLower(string s) {
+    auto t = s;
+    transform(t.begin(), t.end(), t.begin(), ::tolower);
+    return t;
+}
+
+bool isConstDirective(vector<string> line) {
+    return line.size() == 4 && toLower(line[2]) == "const";
+}
+
+struct Data {
+
+    vector<shared_ptr<Directives>> directives;
+
+    Data() = default;
+
+    Data(vector<vector<string>> parsedLines) {
+        directives = vector<shared_ptr<Directives>>();
+        for(auto &line : parsedLines) {
+            if(isConstDirective(line)) {
+                directives.push_back(make_unique<ConstDirective>(line[0], line.back()));
+            } else {
+
+                auto d = (int)line.size() == 4 ?
+                    SpaceDirective(line[0], line.back()) :
+                    SpaceDirective(line[0]);
+
+                directives.push_back(make_unique<SpaceDirective>(d));
+            }
+        }
+    }
+
+    string toString() {
+        string s = "SECTION DATA\n"; 
+
+        for(auto &d : directives) {
+            s += d.get()->toString() + "\n";
+        }
+
+        return s;        
     }
 
 };
@@ -42,17 +126,18 @@ struct Text {
 
 struct Program {
     Data DataSection;
-    Text TextSection;
+    // Text TextSection;
 
     Program() = default;
 
     Program(Data data, Text text) {
         DataSection = data;
-        TextSection = text;
+        // TextSection = text;
     }
 
     string toString() {
-        return TextSection.toString() + "/n" + DataSection.toString(); 
+        return DataSection.toString();
+        // return TextSection.toString() + "/n" + DataSection.toString(); 
     }
 
 };
@@ -141,19 +226,11 @@ Program preProcessFile(string path) {
 
     auto file = readFile(path);
 
-    vector<string> dataSection, textSection;
-
     int dataSectionStartIndex = -1, dataSectionEndIndex = -1;
 
     for(int i = 0; i < (int)file.size(); i++) {
-        auto normalizedLine = file[i];
-        
-        transform(normalizedLine.begin(), normalizedLine.end(), 
-            normalizedLine.begin(), ::tolower);
-        
+        auto normalizedLine = toLower(file[i]);  
         auto parsedLine = getTokens(normalizedLine);
-
-        debug(parsedLine);
 
         if(isDataSection(parsedLine)) {
             dataSectionStartIndex = i;
@@ -168,11 +245,18 @@ Program preProcessFile(string path) {
     }
 
     auto dataSectionLines = split(file, dataSectionStartIndex + 1, dataSectionEndIndex);
-    
-    debug(dataSectionStartIndex, dataSectionEndIndex);
-    debug(dataSectionLines);
 
-    // auto data = Data(dataSectionLines);
+    auto parsedDataSectionLines = vector<vector<string>>();
+
+    for(auto &line : dataSectionLines) {
+        parsedDataSectionLines.push_back(getTokens(line));
+    }
+
+    auto data = Data(parsedDataSectionLines);
+
+    auto s = data.toString();
+    
+    debug(s);
 
     return Program();
 

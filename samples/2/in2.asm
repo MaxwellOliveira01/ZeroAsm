@@ -18,3 +18,4 @@ DOIS: CONST 2
 OLD_DATA: SPACE             ;;;;;;; comentario 6
 NEW_DATA: SPACE;        ;comentario7
 TMP_DATA: SPACE;comentario8;
+ESPACOS: SPACE 10
