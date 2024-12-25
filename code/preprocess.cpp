@@ -1,89 +1,61 @@
+// https://codeforces.com/blog/entry/125435
+#ifdef MAXWELL_LOCAL_DEBUG
+#include "../debug/debug_template.cpp"
+#else
+#define debug(...)
+#define debugArr(arr, n)
+#endif
+
+#define dbg debug()
+
 #include <bits/stdc++.h>
 using namespace std;
 
-vector<string> split(string s, vector<char> keys) {
-    vector<string> ans;
-    string aux = "";
+// TODO: fix name conventions
 
-    set<char> keys_set(keys.begin(), keys.end());
+// enum DataType {
+//     SPACE,
+//     CONST,
+// };
 
-    for (int i = 0; i < (int)s.size(); i++) {
-        if (keys_set.find(s[i]) != keys_set.end()) {
-            if (aux.size() > 0) {
-                ans.push_back(aux);
-                aux = "";
-            }
-        } else {
-            aux += s[i];
-        }
+struct Data {
+
+    Data() = default;
+
+    Data(vector<string>& lines) {
+
     }
 
-    if ((int)aux.size() > 0) {
-        ans.push_back(aux);
+    string toString() {
+        return "";        
     }
 
-    return ans;
-}
+};
 
-string buildParsedLine(vector<string> tokens) {
+struct Text {
 
-    string result = "";
-
-    // Deve ter espaço após ':' e após ',';
-    set<string> specialChars = {":", ","};
-
-    for(int i = 0; i < (int)tokens.size(); i++) {
-        auto &t = tokens[i];
-         
-        result += t;
-
-        if(i + 1 < (int)tokens.size() && specialChars.find(tokens[i + 1]) == specialChars.end()) {
-            result += " ";
-        } else if(specialChars.find(t) != specialChars.end()) {
-            result += " ";
-        } else {
-            string lastChar = ""; 
-            lastChar += t.back();
-            
-            if(specialChars.find(lastChar) != specialChars.end()) {
-                result += " ";
-            }
-        }
-    
+    string toString() {
+        return "";
     }
 
-    return result;
+};
 
-}
+struct Program {
+    Data DataSection;
+    Text TextSection;
 
-string preProcessLine(string rawLine) {
-    
-    // 1. Remover comentarios
-    auto commentStartPos = rawLine.find(";");
+    Program() = default;
 
-    if(commentStartPos != rawLine.npos) {
-        rawLine = rawLine.substr(0, commentStartPos);
+    Program(Data data, Text text) {
+        DataSection = data;
+        TextSection = text;
     }
 
-    // 2. Remover espacos desnecessarios
-    // 3. Remover tabs desnecessarios
-
-    auto splitResult = split(rawLine, vector<char>{ ' ', '\t'});
-    vector<string> nonEmptyParsedLines;
-
-    for(auto &splittedLine: splitResult) {
-        if(splittedLine.size() > 0) {
-            nonEmptyParsedLines.push_back(splittedLine);
-        }
+    string toString() {
+        return TextSection.toString() + "/n" + DataSection.toString(); 
     }
 
-    auto result = buildParsedLine(nonEmptyParsedLines);
-    return result;
-
-    // TODO: enters desnecessarios
-    // TODO: linhas em branco?
-
-}
+};
 
 vector<string> readFile(string path) {
 
@@ -99,25 +71,109 @@ vector<string> readFile(string path) {
         file.close();
     } else {
         cout << "Unable to open file " << path << "\n";
+        exit(1);
     }
 
     return out;
 
 }
 
-vector<string> preProcessFile(string path) {
-    auto lines = readFile(path);
+vector<string> getTokens(string line) {
 
-    vector<string> out;
+    vector<string> tokens;
 
-    for(auto &line : lines) {
-        auto postLine = preProcessLine(line);
-        
-        if((int)postLine.size() > 0) {
-            out.push_back(postLine);
+    string currentToken = "";
+    
+    set<char> ignore = {' ', '\t'};
+    set<char> separators = {',', ':', ';'};
+
+    auto pushIfNeeded = [&](bool resetAfter = false) {
+        if(currentToken.size() > 0) {
+            tokens.push_back(currentToken);
         }
 
+        if(resetAfter) {
+            currentToken = "";
+        }
+    };
+
+    for(auto &c : line) {
+        if(ignore.count(c)) {
+            pushIfNeeded(true);
+        } else {
+            if(separators.count(c)) {
+                pushIfNeeded(true);
+                tokens.push_back(string(1, c));
+            } else {
+                currentToken += c;
+            }
+        }
     }
 
-    return out;
+    if(currentToken.size() > 0) { // do we need to check something before push?
+        tokens.push_back(currentToken);
+    }
+
+    return tokens;
+
+}
+
+bool isDataSection(vector<string> normalizedTokens) {
+    return normalizedTokens.size() == 2 && normalizedTokens[0] == "section" 
+        && normalizedTokens[1] == "data";
+}
+
+bool isTextSection(vector<string> normalizedTokens) {
+    return normalizedTokens.size() == 2 && normalizedTokens[0] == "section"
+        && normalizedTokens[1] == "text";
+}
+
+template <typename T>
+vector<T> split(vector<T>& arr, int l, int r) { // [l,r)
+    vector<T> ans;
+    for(int i = l; i < r; i++) {
+        ans.push_back(arr[i]);
+    }
+    return ans;
+}
+
+Program preProcessFile(string path) {
+
+    auto file = readFile(path);
+
+    vector<string> dataSection, textSection;
+
+    int dataSectionStartIndex = -1, dataSectionEndIndex = -1;
+
+    for(int i = 0; i < (int)file.size(); i++) {
+        auto normalizedLine = file[i];
+        
+        transform(normalizedLine.begin(), normalizedLine.end(), 
+            normalizedLine.begin(), ::tolower);
+        
+        auto parsedLine = getTokens(normalizedLine);
+
+        debug(parsedLine);
+
+        if(isDataSection(parsedLine)) {
+            dataSectionStartIndex = i;
+            dataSectionEndIndex = (int)file.size(); // 1 after, exclusive index
+        }
+
+        if(isTextSection(parsedLine)) {
+            if(dataSectionStartIndex != -1) {
+                dataSectionEndIndex = i;  // 1 after, exclusive index
+            }
+        }
+    }
+
+    auto dataSectionLines = split(file, dataSectionStartIndex + 1, dataSectionEndIndex);
+    
+    debug(dataSectionStartIndex, dataSectionEndIndex);
+    debug(dataSectionLines);
+
+    // auto data = Data(dataSectionLines);
+
+    return Program();
+
 }
