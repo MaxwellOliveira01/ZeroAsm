@@ -79,7 +79,11 @@ string toLower(string s) {
 }
 
 bool isConstDirective(vector<string> line) {
-    return line.size() == 4 && toLower(line[2]) == "const";
+    return (int)line.size() == 4 && toLower(line[2]) == "const";
+}
+
+bool isSpaceDirective(vector<string> line) {
+    return ((int)line.size() == 3 || (int)line.size() == 4) && toLower(line[2]) == "space";
 }
 
 struct Data {
@@ -93,13 +97,17 @@ struct Data {
         for(auto &line : parsedLines) {
             if(isConstDirective(line)) {
                 directives.push_back(make_unique<ConstDirective>(line[0], line.back()));
-            } else {
+            } else if(isSpaceDirective(line)){
 
                 auto d = (int)line.size() == 4 ?
                     SpaceDirective(line[0], line.back()) :
                     SpaceDirective(line[0]);
 
                 directives.push_back(make_unique<SpaceDirective>(d));
+            } else {
+                string message = "Invalid directive: ";
+                for(auto &x: line) message += x + " ";
+                throw runtime_error(message);
             }
         }
     }
@@ -203,6 +211,19 @@ vector<string> getTokens(string line) {
 
 }
 
+vector<string> removeComments(vector<string> tokens) {
+    vector<string> out;
+
+    auto commentIndex = 0;
+
+    while(commentIndex < (int)tokens.size() && tokens[commentIndex] != ";") {
+        commentIndex++;
+    }
+
+    out = vector<string>(tokens.begin(), tokens.begin() + commentIndex);
+    return out;
+}
+
 bool isDataSection(vector<string> normalizedTokens) {
     return normalizedTokens.size() == 2 && normalizedTokens[0] == "section" 
         && normalizedTokens[1] == "data";
@@ -249,13 +270,13 @@ Program preProcessFile(string path) {
     auto parsedDataSectionLines = vector<vector<string>>();
 
     for(auto &line : dataSectionLines) {
-        parsedDataSectionLines.push_back(getTokens(line));
+        parsedDataSectionLines.push_back(removeComments(getTokens(line)));
     }
 
-    auto data = Data(parsedDataSectionLines);
+    // debug(parsedDataSectionLines);
 
-    auto s = data.toString();
-    
+    auto data = Data(parsedDataSectionLines);
+    auto s = data.toString();    
     debug(s);
 
     return Program();
