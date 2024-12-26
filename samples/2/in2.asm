@@ -16,6 +16,9 @@ INPUT OLD_DATA
         SECTION DATA
 DOIS: CONST 2
 OLD_DATA: SPACE             ;;;;;;; comentario 6
+
+;comentario 7
+
 NEW_DATA: SPACE;        ;comentario7
 TMP_DATA: SPACE;comentario8;
 ESPACOS: SPACE 10
