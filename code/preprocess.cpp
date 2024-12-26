@@ -124,7 +124,271 @@ struct Data {
 
 };
 
+enum CommandType {
+    INSTRUCTION, 
+    DIRECTIVE
+};
+
+struct Command { // abstract
+    string label;
+    CommandType type;
+    virtual ~Command() = default;
+    virtual string toString() = 0;
+}; 
+
+struct AddCommand : Command {
+    string value;
+    AddCommand(string label_, string value_) {
+        label = label_;
+        value = value_;
+        type = INSTRUCTION;
+    };
+    AddCommand(string value_) {
+        label = "";
+        value = value_;
+        type = INSTRUCTION;
+    };
+
+    string toString() {
+        return (!label.empty() ? label + ": " : "") + "ADD " + value; 
+    }
+};
+
+struct SubCommand : Command {
+    string value;
+    SubCommand(string label_, string value_) {
+        label = label_;
+        value = value_;
+        type = INSTRUCTION;
+    };
+    SubCommand(string value_) {
+        label = "";
+        value = value_;
+        type = INSTRUCTION;
+    };
+
+    string toString() {
+        return (!label.empty() ? label + ": " : "") + "SUB " + value; 
+    }
+};
+
+struct MultCommand : Command {
+    string value;
+    MultCommand(string label_, string value_) {
+        label = label_;
+        value = value_;
+        type = INSTRUCTION;
+    };
+
+    MultCommand(string value_) {
+        label = "";
+        value = value_;
+        type = INSTRUCTION;
+    };
+
+    string toString() {
+        return (!label.empty() ? label + ": " : "") + "MULT " + value; 
+    }
+};
+
+struct DivCommand : Command {
+    string value;
+    DivCommand(string label_, string value_) {
+        label = label_;
+        value = value_;
+        type = INSTRUCTION;
+    };
+
+    DivCommand(string value_) {
+        label = "";
+        value = value_;
+        type = INSTRUCTION;
+    };
+
+    string toString() {
+        return (!label.empty() ? label + ": " : "") + "DIV " + value; 
+    }
+};
+
+struct JmpCommand : Command {
+    string value;
+    JmpCommand(string label_, string value_) {
+        label = label_;
+        value = value_;
+        type = INSTRUCTION;
+    };
+
+    JmpCommand(string value_) {
+        label = "";
+        value = value_;
+        type = INSTRUCTION;
+    };
+
+    string toString() {
+        return (!label.empty() ? label + ": " : "") + "JMP " + value; 
+    }
+};
+
+struct JmpnCommand : Command {
+    string value;
+    JmpnCommand(string label_, string value_) {
+        label = label_;
+        value = value_;
+        type = INSTRUCTION;
+    };
+
+    JmpnCommand(string value_) {
+        label = "";
+        value = value_;
+        type = INSTRUCTION;
+    };
+
+    string toString() {
+        return (!label.empty() ? label + ": " : "") + "JMPN " + value; 
+    }
+};
+
+struct JmpzCommand : Command {
+    string value;
+    JmpzCommand(string label_, string value_) {
+        label = label_;
+        value = value_;
+        type = INSTRUCTION;
+    };
+
+    JmpzCommand(string value_) {
+        label = "";
+        value = value_;
+        type = INSTRUCTION;
+    };
+
+    string toString() {
+        return (!label.empty() ? label + ": " : "") + "JMPZ " + value; 
+    }
+};
+
+struct CopyCommand : Command {
+    string value1;
+    string value2;
+    CopyCommand(string label_, string value1_, string value2_) {
+        label = label_;
+        value1 = value1_;
+        value2 = value2_;
+        type = INSTRUCTION;
+    };
+
+    CopyCommand(string value1_, string value2_) {
+        label = "";
+        value1 = value1_;
+        value2 = value2_;
+        type = INSTRUCTION;
+    };
+
+    string toString() {
+        return (!label.empty() ? label + ": " : "") + "COPY " + value1 + ","+value2; 
+    }
+};
+
+struct LoadCommand : Command {
+    string value;
+    LoadCommand(string label_, string value_) {
+        label = label_;
+        value = value_;
+        type = INSTRUCTION;
+    };
+
+    LoadCommand(string value_) {
+        label = "";
+        value = value_;
+        type = INSTRUCTION;
+    };
+
+    string toString() {
+        return (!label.empty() ? label + ": " : "") + "LOAD " + value; 
+    }
+};
+
+struct StoreCommand : Command {
+    string value;
+    StoreCommand(string label_, string value_) {
+        label = label_;
+        value = value_;
+        type = INSTRUCTION;
+    };
+
+    StoreCommand(string value_) {
+        label = "";
+        value = value_;
+        type = INSTRUCTION;
+    };
+
+    string toString() {
+        return (!label.empty() ? label + ": " : "") + "STORE " + value; 
+    }
+};
+
+struct InputCommand : Command {
+    string value;
+    InputCommand(string label_, string value_) {
+        label = label_;
+        value = value_;
+        type = INSTRUCTION;
+    };
+
+    InputCommand(string value_) {
+        label = "";
+        value = value_;
+        type = INSTRUCTION;
+    };
+
+    string toString() {
+        return (!label.empty() ? label + ": " : "") + "INPUT " + value; 
+    }
+};
+
+struct OutputCommand : Command {
+    string value;
+    OutputCommand(string label_, string value_) {
+        label = label_;
+        value = value_;
+        type = INSTRUCTION;
+    };
+
+    OutputCommand(string value_) {
+        label = "";
+        value = value_;
+        type = INSTRUCTION;
+    };
+
+    string toString() {
+        return (!label.empty() ? label + ": " : "") + "OUTPUT " + value; 
+    }
+};
+
+struct StopCommand : Command {
+    string value;
+    StopCommand(string label_) {
+        label = label_;
+        type = INSTRUCTION;
+    };
+
+    StopCommand(string value_) {
+        label = "";
+        value = value_;
+        type = INSTRUCTION;
+    };
+
+    string toString() {
+        return (!label.empty() ? label + ": " : "") + "STOP " + value; 
+    }
+};
+
+
+
+
+
 struct Text {
+    vector<shared_ptr<Command>> commands;
 
     string toString() {
         return "";
@@ -134,18 +398,18 @@ struct Text {
 
 struct Program {
     Data DataSection;
-    // Text TextSection;
+    Text TextSection;
 
     Program() = default;
 
     Program(Data data, Text text) {
         DataSection = data;
-        // TextSection = text;
+        TextSection = text;
     }
 
     string toString() {
         return DataSection.toString();
-        // return TextSection.toString() + "/n" + DataSection.toString(); 
+        return TextSection.toString() + "/n" + DataSection.toString(); 
     }
 
 };
