@@ -115,7 +115,7 @@ array<int, 4> getTextAndDataSectionIndexes(vector<string>& file) {
 
     for(int i = 0; i < (int)file.size(); i++) {
         auto normalizedLine = toLower(file[i]);  
-        auto parsedLine = getTokens(normalizedLine);
+        auto parsedLine = removeComments(getTokens(normalizedLine));
 
         if(isDataSection(parsedLine)) {
             dataSectionStartIndex = i;
