@@ -15,20 +15,19 @@
 
 using namespace std;
 
-struct Program {
-    Data DataSection;
-    Text TextSection;
+struct PreProcessedProgram {
+    PreProcessedData DataSection;
+    PreProcessedText TextSection;
 
-    Program() = default;
+    PreProcessedProgram() = default;
 
-    Program(Text text, Data data) {
+    PreProcessedProgram(PreProcessedText text, PreProcessedData data) {
         DataSection = data;
         TextSection = text;
     }
 
     string toString() {
-        return DataSection.toString();
-        return TextSection.toString() + "/n" + DataSection.toString(); 
+        return TextSection.toString() + "\n" + DataSection.toString(); 
     }
 
 };
@@ -86,7 +85,7 @@ vector<string> removeComments(vector<string> tokens) {
     return out;
 }
 
-Data getData(vector<string> lines) {
+PreProcessedData getPreProcessedData(vector<string> lines) {
 
     auto parsedDataSectionLines = vector<vector<string>>();
 
@@ -94,11 +93,11 @@ Data getData(vector<string> lines) {
         parsedDataSectionLines.push_back(removeComments(getTokens(line)));
     }
 
-    return Data(parsedDataSectionLines);
+    return PreProcessedData(parsedDataSectionLines);
 
 }
 
-Text getText(vector<string> lines){
+PreProcessedText getPreProcessedText(vector<string> lines){
 
     auto parsedTextSectionLines = vector<vector<string>>();
 
@@ -106,13 +105,11 @@ Text getText(vector<string> lines){
         parsedTextSectionLines.push_back(removeComments(getTokens(line)));
     }
 
-    return Text(parsedTextSectionLines);
+    return PreProcessedText(parsedTextSectionLines);
 
 }
 
-Program preProcessFile(string path) {
-
-    auto file = readFile(path);
+array<int, 4> getTextAndDataSectionIndexes(vector<string>& file) {
 
     int dataSectionStartIndex = -1, textSectionStartIndex = -1;
 
@@ -130,7 +127,7 @@ Program preProcessFile(string path) {
     }
 
     if(dataSectionStartIndex == -1 || textSectionStartIndex == -1) {
-        throw runtime_error("Data or text section not found");
+        showErrorAndExit("Data or text section not found");
     }
 
     int dataSectionEndIndex = -1, textSectionEndIndex = -1;
@@ -143,12 +140,23 @@ Program preProcessFile(string path) {
         dataSectionEndIndex = (int)file.size(); // 1 after
     }
 
+    return {dataSectionStartIndex, dataSectionEndIndex, textSectionStartIndex, textSectionEndIndex};
+
+}
+
+PreProcessedProgram preProcessFile(string path) {
+
+    auto file = readFile(path);
+
+    auto [dataSectionStartIndex, dataSectionEndIndex, textSectionStartIndex, textSectionEndIndex] 
+        = getTextAndDataSectionIndexes(file);
+
     auto dataSectionLines = split(file, dataSectionStartIndex + 1, dataSectionEndIndex);
-    auto data = getData(dataSectionLines);
+    auto data = getPreProcessedData(dataSectionLines);
 
     auto textSectionLines = split(file, textSectionStartIndex + 1, textSectionEndIndex);
-    auto text = getText(textSectionLines);
+    auto text = getPreProcessedText(textSectionLines);
 
-    return Program();
+    return PreProcessedProgram(text, data);
 
 }

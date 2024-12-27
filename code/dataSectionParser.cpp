@@ -107,3 +107,50 @@ struct Data {
     }
 
 };
+
+struct PreProcessedData {
+
+    vector<string> lines;
+
+    PreProcessedData() = default;
+
+    PreProcessedData(vector<vector<string>> parsedLines) {
+        lines = vector<string>();
+        
+        for(auto &line : parsedLines) {
+        
+            if((int)line.size() == 0) {
+                continue;
+            }
+
+            // just ignore empty lines and comments
+
+            string result = "";
+
+            for(int i = 0; i < (int)line.size(); i++) {
+                result += line[i];
+                if(i + 1 < (int)line.size() && line[i + 1] != ":") {
+                    result += " ";
+                }
+            }
+
+            lines.push_back(result);
+        
+        }
+    }
+
+    string toString() {
+        string s = "SECTION DATA\n";
+
+        for(int i = 0; i < (int)lines.size(); i++) {
+            s += lines[i];
+            if(i + 1 < (int)lines.size()) {
+                s += "\n";
+            }
+        }
+        
+        return s;  
+    }
+
+
+};

@@ -490,3 +490,69 @@ struct Text {
     }
 
 };
+
+struct PreProcessedText {
+
+    vector<string> lines;
+
+    PreProcessedText() = default;
+
+    PreProcessedText(vector<vector<string>> parsedLines) {
+        lines = vector<string>();
+
+        vector<string> pastLabels;
+
+        for(auto &line : parsedLines) {
+            if((int)line.size() == 0) {
+                continue;
+            }
+
+            string label = "";
+
+            if(hasLabel(line)) {
+                pastLabels.push_back(line[0]);
+                line = split(line, 2, (int)line.size());
+            }
+
+            if((int)line.size() == 0) {
+                continue;
+            }
+
+            string result = "";
+
+            for(auto &x : pastLabels) {
+                result += x + ": ";
+            }
+
+            // "instruction" + space if its different from stop
+            result += line[0] + ((int)line.size() > 1 ? " " : ""); 
+
+            // arguments in the same way as the input
+            for(int i = 1; i < (int)line.size(); i++) {
+                result += line[i];
+            }
+
+            lines.push_back(result);
+
+            pastLabels.clear();
+
+        }
+    }
+
+    string toString() {
+        string s = "SECTION TEXT\n";
+
+        for(int i = 0; i < (int)lines.size(); i++) {
+            s += lines[i];
+            if(i + 1 < (int)lines.size()) {
+                s += "\n";
+            }
+        }
+        
+        return s;  
+    }
+
+};
+
+
+
