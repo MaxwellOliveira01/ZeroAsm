@@ -1,5 +1,7 @@
 SECTION TEXT
+L1: 
 INPUT NUM
+L2:             ;comment
 OUTPUT NUM
 SECTION DATA
 NUM: SPACE
