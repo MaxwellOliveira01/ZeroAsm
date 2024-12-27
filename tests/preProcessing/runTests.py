@@ -16,9 +16,19 @@ for testNum in range(len(tests)):
 
     result = subprocess.run(["./../../cod", input_file], capture_output=True, text=True)
 
-    if result.returncode == 0:
-        print(f"{BOLD}{GREEN}Passed{RESET}")
-    else:
-        print(f"{BOLD}{RED}Failed{RESET}. Output: {result.stdout}", end="")
+    if(result.returncode != 0):
+        print(f"{BOLD}{RED}Failed{RESET}. Output: {result.stderr}", end="")
+        continue
 
-    os.remove(tests[testNum].replace(".asm", ".pre"))
+    test_output_name = tests[testNum].replace(".asm", ".pre")
+
+    generated_output = test_output_name
+    correct_output = os.path.join("out", test_output_name)
+
+    diff = subprocess.run(["diff", "-q", correct_output, generated_output], capture_output=True, text=True)
+
+    if diff.returncode == 0:
+        print(f"{BOLD}{GREEN}Passed{RESET}")
+        os.remove(tests[testNum].replace(".asm", ".pre"))
+    else:
+        print(f"{BOLD}{RED}Failed{RESET}. Output: {diff.stdout}", end="")
