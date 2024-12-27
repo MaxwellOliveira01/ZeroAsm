@@ -59,3 +59,37 @@ bool isSpaceDirective(vector<string> line) {
 bool hasLabel(vector<string> line) {
     return (int)line.size() >= 2 && line[1] == ":";
 }
+
+pair<string, string> parseFileName(string path) {
+
+    string res = "";
+
+    int idx = (int)path.size() - 1;
+
+    while(idx >= 0 && path[idx] != '/') {
+        res += path[idx];
+        idx--;
+    }
+
+    reverse(res.begin(), res.end());
+
+    string name = "", extension = "";
+
+    bool ponto = false;
+
+    for(auto &x : res) {
+        if(x == '.') {
+            ponto = true;
+            continue;
+        }
+
+        if(ponto) {
+            extension += x;
+        } else {
+            name += x;
+        }
+    }
+
+    return {name, extension};
+
+}
