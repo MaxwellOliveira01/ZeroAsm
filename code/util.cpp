@@ -60,6 +60,11 @@ bool hasLabel(vector<string> line) {
     return (int)line.size() >= 2 && line[1] == ":";
 }
 
+void showErrorAndExit(string message) {
+    cout << message << "\n";
+    exit(-1);
+}
+
 pair<string, string> parseFileName(string path) {
 
     string res = "";
@@ -90,6 +95,6 @@ pair<string, string> parseFileName(string path) {
         }
     }
 
-    return {name, extension};
+    return { name, extension };
 
 }
