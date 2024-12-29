@@ -29,6 +29,6 @@ for testNum in range(len(tests)):
 
     if diff.returncode == 0:
         print(f"{BOLD}{GREEN}Passed{RESET}")
-        os.remove(tests[testNum].replace(".asm", ".pre"))
+        os.remove(test_output_name)
     else:
         print(f"{BOLD}{RED}Failed{RESET}. Output: {diff.stdout}", end="")

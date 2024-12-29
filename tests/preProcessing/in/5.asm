@@ -1,0 +1,5 @@
+SectIOn TexT
+L1: INPUT NUM
+L2: OUTPUT NUM
+sectION datA
+NUM: SPACE
