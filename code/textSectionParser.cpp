@@ -1,4 +1,8 @@
-#include <bits/stdc++.h>
+#include <iostream>
+#include <memory>
+#include <string>
+#include <vector>
+#include <algorithm>
 
 #ifndef UTIL_INCLUDED
 #define UTIL_INCLUDED
@@ -13,37 +17,47 @@
 using namespace std;
 
 enum CommandType {
-    INSTRUCTION, 
-    DIRECTIVE
+    Add,
+    Sub,
+    Mult,
+    Div,
+    Jmp,
+    Jmpn,
+    Jmpp,
+    Jmpz,
+    Copy,
+    Load,
+    Store,
+    Input,
+    Output,
+    Stop,
 };
 
 struct Command { // abstract
     string label;
     CommandType type;
     virtual ~Command() = default;
-    virtual string toString() = 0;
+    virtual string toString();
+    Command(string label_, CommandType type_) : label(label_), type(type_) {}
+    Command(CommandType type_) : label(""), type(type_) {}
 }; 
 
 struct AddCommand : Command {
     string value;
 
-    AddCommand(string label_, string value_) {
-        label = label_;
-        value = value_;
-        type = INSTRUCTION;
+    AddCommand(string label_, string value_): Command(label_, CommandType::Add), value(value_) {
+
     };
 
-    AddCommand(string value_) {
-        label = "";
-        value = value_;
-        type = INSTRUCTION;
+    AddCommand(string value_): Command(CommandType::Add), value(value_) {
+
     };
 
     bool static IsAddCommand(vector<string> line) {
         return (int)line.size() && toLower(line[0]) == "add";
     }
 
-    string toString() {
+    string toString() override {
         return (!label.empty() ? label + ": " : "") + "ADD " + value; 
     }
 };
@@ -51,16 +65,12 @@ struct AddCommand : Command {
 struct SubCommand : Command {
     string value;
 
-    SubCommand(string label_, string value_) {
-        label = label_;
-        value = value_;
-        type = INSTRUCTION;
+    SubCommand(string label_, string value_): Command(label_, CommandType::Sub), value(value_) {
+
     };
 
-    SubCommand(string value_) {
-        label = "";
-        value = value_;
-        type = INSTRUCTION;
+    SubCommand(string value_): Command(CommandType::Sub), value(value_) {
+
     };
 
     bool static IsSubCommand(vector<string> line) {
@@ -75,23 +85,19 @@ struct SubCommand : Command {
 struct MultCommand : Command {
     string value;
 
-    MultCommand(string label_, string value_) {
-        label = label_;
-        value = value_;
-        type = INSTRUCTION;
+    MultCommand(string label_, string value_): Command(label_, CommandType::Mult), value(value_) {
+
     };
 
-    MultCommand(string value_) {
-        label = "";
-        value = value_;
-        type = INSTRUCTION;
+    MultCommand(string value_): Command(CommandType::Mult), value(value_) {
+
     };
 
     bool static IsMultCommand(vector<string> line) {
         return (int)line.size() && toLower(line[0]) == "mult";
     }
 
-    string toString() {
+    string toString() override {
         return (!label.empty() ? label + ": " : "") + "MULT " + value; 
     }
 };
@@ -99,23 +105,19 @@ struct MultCommand : Command {
 struct DivCommand : Command {
     string value;
 
-    DivCommand(string label_, string value_) {
-        label = label_;
-        value = value_;
-        type = INSTRUCTION;
+    DivCommand(string label_, string value_): Command(label_, CommandType::Div), value(value_) {
+
     };
 
-    DivCommand(string value_) {
-        label = "";
-        value = value_;
-        type = INSTRUCTION;
+    DivCommand(string value_): Command(CommandType::Div), value(value_) {
+
     };
 
     bool static IsDivCommand(vector<string> line) {
         return (int)line.size() && toLower(line[0]) == "div";
     }
 
-    string toString() {
+    string toString() override {
         return (!label.empty() ? label + ": " : "") + "DIV " + value; 
     }
 };
@@ -123,16 +125,12 @@ struct DivCommand : Command {
 struct JmpCommand : Command {
     string value;
 
-    JmpCommand(string label_, string value_) {
-        label = label_;
-        value = value_;
-        type = INSTRUCTION;
+    JmpCommand(string label_, string value_): Command(label_, CommandType::Jmp), value(value_) {
+
     };
 
-    JmpCommand(string value_) {
-        label = "";
-        value = value_;
-        type = INSTRUCTION;
+    JmpCommand(string value_): Command(CommandType::Jmp), value(value_) {
+
     };
 
     bool static IsJmpCommand(vector<string> line) {
@@ -147,16 +145,12 @@ struct JmpCommand : Command {
 struct JmpnCommand : Command {
     string value;
 
-    JmpnCommand(string label_, string value_) {
-        label = label_;
-        value = value_;
-        type = INSTRUCTION;
+    JmpnCommand(string label_, string value_): Command(label_, CommandType::Jmpn), value(value_) {
+
     };
 
-    JmpnCommand(string value_) {
-        label = "";
-        value = value_;
-        type = INSTRUCTION;
+    JmpnCommand(string value_): Command(CommandType::Jmpn), value(value_) {
+
     };
 
     bool static IsJmpnCommand(vector<string> line) {
@@ -171,16 +165,12 @@ struct JmpnCommand : Command {
 struct JmppCommand : Command {
     string value;
 
-    JmppCommand(string label_, string value_) {
-        label = label_;
-        value = value_;
-        type = INSTRUCTION;
+    JmppCommand(string label_, string value_): Command(label_, CommandType::Jmpp), value(value_) {
+
     };
 
-    JmppCommand(string value_) {
-        label = "";
-        value = value_;
-        type = INSTRUCTION;
+    JmppCommand(string value_): Command(CommandType::Jmpp), value(value_) {
+
     };
 
     bool static IsJmppCommand(vector<string> line) {
@@ -195,16 +185,12 @@ struct JmppCommand : Command {
 struct JmpzCommand : Command {
     string value;
 
-    JmpzCommand(string label_, string value_) {
-        label = label_;
-        value = value_;
-        type = INSTRUCTION;
+    JmpzCommand(string label_, string value_): Command(label_, CommandType::Jmpz), value(value_) {
+
     };
 
-    JmpzCommand(string value_) {
-        label = "";
-        value = value_;
-        type = INSTRUCTION;
+    JmpzCommand(string value_): Command(CommandType::Jmpz), value(value_) {
+
     };
 
     bool static IsJmpzCommand(vector<string> line) {
@@ -219,18 +205,12 @@ struct JmpzCommand : Command {
 struct CopyCommand : Command {
     string value1, value2;
     
-    CopyCommand(string label_, string value1_, string value2_) {
-        label = label_;
-        value1 = value1_;
-        value2 = value2_;
-        type = INSTRUCTION;
+    CopyCommand(string label_, string value1_, string value2_): Command(label_, CommandType::Copy), value1(value1_), value2(value2_) {
+
     };
 
-    CopyCommand(string value1_, string value2_) {
-        label = "";
-        value1 = value1_;
-        value2 = value2_;
-        type = INSTRUCTION;
+    CopyCommand(string value1_, string value2_): Command(CommandType::Copy), value1(value1_), value2(value2_) {
+
     };
 
     bool static IsCopyCommand(vector<string> line) {
@@ -245,16 +225,12 @@ struct CopyCommand : Command {
 struct LoadCommand : Command {
     string value;
 
-    LoadCommand(string label_, string value_) {
-        label = label_;
-        value = value_;
-        type = INSTRUCTION;
+    LoadCommand(string label_, string value_): Command(label_, CommandType::Load), value(value_) {
+
     };
 
-    LoadCommand(string value_) {
-        label = "";
-        value = value_;
-        type = INSTRUCTION;
+    LoadCommand(string value_): Command(CommandType::Load), value(value_) {
+
     };
 
     bool static isLoadCommand(vector<string> line) {
@@ -269,16 +245,12 @@ struct LoadCommand : Command {
 struct StoreCommand : Command {
     string value;
 
-    StoreCommand(string label_, string value_) {
-        label = label_;
-        value = value_;
-        type = INSTRUCTION;
+    StoreCommand(string label_, string value_): Command(label_, CommandType::Store), value(value_) {
+
     };
 
-    StoreCommand(string value_) {
-        label = "";
-        value = value_;
-        type = INSTRUCTION;
+    StoreCommand(string value_): Command(CommandType::Store), value(value_) {
+
     };
 
     bool static isStoreCommand(vector<string> line) {
@@ -293,16 +265,12 @@ struct StoreCommand : Command {
 struct InputCommand : Command {
     string value;
 
-    InputCommand(string label_, string value_) {
-        label = label_;
-        value = value_;
-        type = INSTRUCTION;
+    InputCommand(string label_, string value_): Command(label_, CommandType::Input), value(value_) {
+
     };
 
-    InputCommand(string value_) {
-        label = "";
-        value = value_;
-        type = INSTRUCTION;
+    InputCommand(string value_): Command(CommandType::Input), value(value_) {
+
     };
 
     bool static isInputCommand(vector<string> line) {
@@ -317,16 +285,12 @@ struct InputCommand : Command {
 struct OutputCommand : Command {
     string value;
 
-    OutputCommand(string label_, string value_) {
-        label = label_;
-        value = value_;
-        type = INSTRUCTION;
+    OutputCommand(string label_, string value_): Command(label_, CommandType::Output), value(value_) {
+
     };
 
-    OutputCommand(string value_) {
-        label = "";
-        value = value_;
-        type = INSTRUCTION;
+    OutputCommand(string value_): Command(CommandType::Output), value(value_) {
+
     };
 
     bool static isOutputCommand(vector<string> line) {
@@ -339,9 +303,13 @@ struct OutputCommand : Command {
 };
 
 struct StopCommand : Command {
-    StopCommand(string label_) {
-        label = label_;
-        type = INSTRUCTION;
+
+    StopCommand(string label_): Command(label_, CommandType::Stop) {
+
+    };
+
+    StopCommand(): Command(CommandType::Stop) {
+
     };
 
     bool static isStopCommand(vector<string> line) {
@@ -392,72 +360,72 @@ struct Text {
             }
 
             if(AddCommand::IsAddCommand(line)) {
-                commands.push_back(make_unique<AddCommand>(label, line[1]));
+                commands.push_back(make_shared<AddCommand>(label, line[1]));
                 continue;
-            } 
-            
+            }
+
             if(SubCommand::IsSubCommand(line)) {
-                commands.push_back(make_unique<SubCommand>(label, line[1]));
+                commands.push_back(make_shared<SubCommand>(label, line[1]));
                 continue;
             }
             
             if(MultCommand::IsMultCommand(line)) {
-                commands.push_back(make_unique<MultCommand>(label, line[1]));
+                commands.push_back(make_shared<MultCommand>(label, line[1]));
                 continue;
             }
             
             if(DivCommand::IsDivCommand(line)) {
-                commands.push_back(make_unique<DivCommand>(label, line[1]));
+                commands.push_back(make_shared<DivCommand>(label, line[1]));
                 continue;
             }
             
             if(JmpCommand::IsJmpCommand(line)) {
-                commands.push_back(make_unique<JmpCommand>(label, line[1]));
+                commands.push_back(make_shared<JmpCommand>(label, line[1]));
                 continue;
             }
             
             if(JmpnCommand::IsJmpnCommand(line)) {
-                commands.push_back(make_unique<JmpnCommand>(label, line[1]));
+                commands.push_back(make_shared<JmpnCommand>(label, line[1]));
                 continue;
             }
             
             if(JmppCommand::IsJmppCommand(line)) {
-                commands.push_back(make_unique<JmppCommand>(label, line[1]));
+                commands.push_back(make_shared<JmppCommand>(label, line[1]));
                 continue;
             }
             
             if(JmpzCommand::IsJmpzCommand(line)) {
-                commands.push_back(make_unique<JmpzCommand>(label, line[1]));
+                commands.push_back(make_shared<JmpzCommand>(label, line[1]));
                 continue;
             }
             
             if(CopyCommand::IsCopyCommand(line)) {
-                commands.push_back(make_unique<CopyCommand>(label, line[1], line[3]));
+                commands.push_back(make_shared<CopyCommand>(label, line[1], line[3]));
                 continue;
             }
             
             if(LoadCommand::isLoadCommand(line)) {
-                commands.push_back(make_unique<LoadCommand>(label, line[1]));
+                commands.push_back(make_shared<LoadCommand>(label, line[1]));
                 continue;
             }
             
             if(StoreCommand::isStoreCommand(line)) {
-                commands.push_back(make_unique<StoreCommand>(label, line[1]));
+                commands.push_back(make_shared<StoreCommand>(label, line[1]));
                 continue;
             }
             
             if(InputCommand::isInputCommand(line)) {
-                commands.push_back(make_unique<InputCommand>(label, line[1]));
+                commands.push_back(make_shared<InputCommand>(label, line[1]));
                 continue;
             }
             
             if(OutputCommand::isOutputCommand(line)) {
-                commands.push_back(make_unique<OutputCommand>(label, line[1]));
+                commands.push_back(make_shared<OutputCommand>(label, line[1]));
                 continue;
             }
             
             if(StopCommand::isStopCommand(line)) {
-                commands.push_back(make_unique<StopCommand>(label));
+                commands.push_back(make_shared<StopCommand>(label));
                 continue;
             } 
 
@@ -553,6 +521,3 @@ struct PreProcessedText {
     }
 
 };
-
-
-

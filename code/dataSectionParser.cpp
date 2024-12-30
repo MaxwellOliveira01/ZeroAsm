@@ -17,21 +17,20 @@ struct Directives { // abstract
     string label;
     DirectiveType type;
     virtual ~Directives() = default;
-    virtual string toString() = 0;
+    virtual string toString();
+    Directives(string label_, DirectiveType type_) : label(label_), type(type_) {}
 };
 
 struct ConstDirective : Directives {
     
-    // TODO: change it to int
+    // TODO: change it to int?
     string value; // needs to handle decimal, hexadecimal and binary
 
-    ConstDirective(string label_, string value_) {
-        label = label_;
-        value = value_;
-        type = CONST;
+    ConstDirective(string label_, string value_): Directives(label_, DirectiveType::CONST), value(value_) {
+
     };
 
-    string toString() {
+    string toString() override {
         return label + ": CONST " + value;
     }
 
@@ -41,25 +40,17 @@ struct SpaceDirective : Directives {
 
     string value; // str?
 
-    SpaceDirective(string label_, string value_) {
-        label = label_;
-        value = value_;
-        type = SPACE;
-    }
-
-    SpaceDirective(string label_) {
-        label = label_;
-        value = "";
-        type = SPACE;
-    }
-
-    string toString() {
-        auto s = label + ": SPACE";
+    SpaceDirective(string label_): Directives(label_, DirectiveType::SPACE) {
         
-        if((int)value.size()) {
-            s += " " + value;
-        }
+    }
 
+    SpaceDirective(string label_, string value_): Directives(label_, DirectiveType::SPACE), value(value_) {
+
+    }
+
+    string toString() override {
+        auto s = label + ": SPACE";
+        if((int)value.size()) s += " " + value;
         return s;
     }
     

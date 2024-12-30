@@ -18,23 +18,17 @@ using namespace std;
 
 int main(int argc, char *argv[]) {
 
-    auto [fileName, extension] = parseFileName(argv[1]);
+    auto path = argv[1];
+    auto [fileName, extension] = parseFileName(path);
 
     if(toLower(extension) == "asm") {
-
         string outputName = fileName + ".pre"; 
-
-        // just create an empty file for now
-        ofstream empty(outputName);
-        empty.close();
-
-        auto preProcessedResult = preProcessFile(argv[1]);
-
-        ofstream res(outputName);
-        res << preProcessedResult.toString();
-        res.close();
-
+        writeToFile(outputName, ""); // just create an empty file for now
+        auto preProcessedResult = preProcessFile(path);
+        writeToFile(outputName, preProcessedResult.toString());
     } else if(toLower(extension) == "pre") {
+        
+        // auto program = getProgram(path);
 
     } else {
         showErrorAndExit("Invalid file extension, it must be .asm or .pre");

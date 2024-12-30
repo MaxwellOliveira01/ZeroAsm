@@ -98,3 +98,70 @@ pair<string, string> parseFileName(string path) {
     return { name, extension };
 
 }
+
+vector<string> getTokens(string line) {
+
+    vector<string> tokens;
+
+    string currentToken = "";
+    
+    set<char> ignore = {' ', '\t'};
+    set<char> separators = {',', ':', ';'};
+
+    auto pushIfNeeded = [&](bool resetAfter = false) {
+        if(currentToken.size() > 0) {
+            tokens.push_back(currentToken);
+        }
+
+        if(resetAfter) {
+            currentToken = "";
+        }
+    };
+
+    for(auto &c : line) {
+        if(ignore.count(c)) {
+            pushIfNeeded(true);
+        } else {
+            if(separators.count(c)) {
+                pushIfNeeded(true);
+                tokens.push_back(string(1, c));
+            } else {
+                currentToken += c;
+            }
+        }
+    }
+
+    if(currentToken.size() > 0) { // do we need to check something before push?
+        tokens.push_back(currentToken);
+    }
+
+    return tokens;
+
+}
+
+vector<string> removeComments(vector<string> tokens) {
+    vector<string> out;
+
+    auto commentIndex = 0;
+
+    while(commentIndex < (int)tokens.size() && tokens[commentIndex] != ";") {
+        commentIndex++;
+    }
+
+    out = vector<string>(tokens.begin(), tokens.begin() + commentIndex);
+    return out;
+}
+
+void writeToFile(string path, string content) {
+
+    ofstream file(path);
+
+    if(file.is_open()) {
+        file << content;
+        file.close();
+    } else {
+        cout << "Unable to open file " << path << "\n";
+        exit(1);
+    }
+
+}
