@@ -17,7 +17,7 @@ struct Directives { // abstract
     string label;
     DirectiveType type;
     virtual ~Directives() = default;
-    virtual string toString();
+    virtual string toString() = 0;
     Directives(string label_, DirectiveType type_) : label(label_), type(type_) {}
 };
 
@@ -29,6 +29,10 @@ struct ConstDirective : Directives {
     ConstDirective(string label_, string value_): Directives(label_, DirectiveType::CONST), value(value_) {
 
     };
+
+    static bool isConstDirective(vector<string> line) {
+        return (int)line.size() == 4 && toLower(line[2]) == "const";
+    }
 
     string toString() override {
         return label + ": CONST " + value;
@@ -48,6 +52,11 @@ struct SpaceDirective : Directives {
 
     }
 
+    static bool isSpaceDirective(vector<string> line) {
+        return ((int)line.size() == 3 || (int)line.size() == 4) 
+            && toLower(line[2]) == "space";
+    }
+
     string toString() override {
         auto s = label + ": SPACE";
         if((int)value.size()) s += " " + value;
@@ -60,30 +69,42 @@ struct Data {
 
     vector<shared_ptr<Directives>> directives;
 
-    Data() = default;
+    Data() {
+        directives = vector<shared_ptr<Directives>>();
+    }
 
     Data(vector<vector<string>> parsedLines) {
         directives = vector<shared_ptr<Directives>>();
         for(auto &line : parsedLines) {
+            AddLine(line);
+        }
+    }
 
-            if((int)line.size() == 0) {
-                continue;
-            }
+    void AddLine(vector<string> line) {
 
-            if(isConstDirective(line)) {
-                directives.push_back(make_unique<ConstDirective>(line[0], line.back()));
-            } else if(isSpaceDirective(line)){
+        if((int)line.size() == 0) {
+            return;
+        }
 
-                auto d = (int)line.size() == 4 ?
-                    SpaceDirective(line[0], line.back()) :
-                    SpaceDirective(line[0]);
+        directives.push_back(ValidateAndCreateClassObj(line));
 
-                directives.push_back(make_unique<SpaceDirective>(d));
-            } else {
-                string message = "Invalid directive: ";
-                for(auto &x: line) message += x + " ";
-                throw runtime_error(message);
-            }
+    }
+
+    shared_ptr<Directives> ValidateAndCreateClassObj(vector<string> line) {
+        if(ConstDirective::isConstDirective(line)) {
+            
+            return make_unique<ConstDirective>(line[0], line.back());
+        
+        } else if(SpaceDirective::isSpaceDirective(line)){
+
+            auto d = (int)line.size() == 4 ?
+                SpaceDirective(line[0], line.back()) :
+                SpaceDirective(line[0]);
+
+            return make_unique<SpaceDirective>(d);
+        } else {
+            showErrorAndExit("Invalid directive at data section", line);
+            return nullptr; // unreachable
         }
     }
 

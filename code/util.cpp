@@ -47,15 +47,6 @@ bool isTextSection(vector<string> normalizedTokens) {
         && normalizedTokens[1] == "text";
 }
 
-bool isConstDirective(vector<string> line) {
-    return (int)line.size() == 4 && toLower(line[2]) == "const";
-}
-
-bool isSpaceDirective(vector<string> line) {
-    return ((int)line.size() == 3 || (int)line.size() == 4) 
-        && toLower(line[2]) == "space";
-}
-
 bool hasLabel(vector<string> line) {
     return (int)line.size() >= 2 && line[1] == ":";
 }
@@ -63,6 +54,19 @@ bool hasLabel(vector<string> line) {
 void showErrorAndExit(string message) {
     cout << message << "\n";
     exit(-1);
+}
+
+void showErrorAndExit(string message, vector<string> tokens) {
+    cout << message << "\nTokens=[";
+
+    for(int i = 0; i < (int)tokens.size(); i++) {
+        cout << "'" << tokens[i] << "'";
+        if(i + 1 < (int)tokens.size()) {
+            cout << ", ";
+        }
+    }
+
+    cout << "]\n";
 }
 
 pair<string, string> parseFileName(string path) {

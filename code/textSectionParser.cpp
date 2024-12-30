@@ -37,7 +37,7 @@ struct Command { // abstract
     string label;
     CommandType type;
     virtual ~Command() = default;
-    virtual string toString();
+    virtual string toString() = 0;
     Command(string label_, CommandType type_) : label(label_), type(type_) {}
     Command(CommandType type_) : label(""), type(type_) {}
 }; 
@@ -324,12 +324,12 @@ struct StopCommand : Command {
 struct Text {
     vector<shared_ptr<Command>> commands;
 
-    Text() = default;
+    Text() {
+        commands = vector<shared_ptr<Command>>();
+    }
 
     Text(vector<vector<string>> parsedLines) {
         commands = vector<shared_ptr<Command>>();
-
-        // vector<string> pastLabels;
         string pastLabels = "";
 
         for(auto &line : parsedLines) {
@@ -342,8 +342,8 @@ struct Text {
 
             if(hasLabel(line)) {
                 if((int)pastLabels.size()) {
-                    // more than one labels in a row
-                    throw runtime_error("More than one label in a row: " + pastLabels + " and " + line[0]);
+                    // more than one labels in a row, should not happen since the file is preprocessed
+                    showErrorAndExit("More than one label in a row: " + pastLabels + " and " + line[0]);
                 } else {
                     label = line[0];
                     line = split(line, 2, (int)line.size());
@@ -359,91 +359,91 @@ struct Text {
                 pastLabels = "";
             }
 
-            if(AddCommand::IsAddCommand(line)) {
-                commands.push_back(make_shared<AddCommand>(label, line[1]));
-                continue;
-            }
-
-            if(SubCommand::IsSubCommand(line)) {
-                commands.push_back(make_shared<SubCommand>(label, line[1]));
-                continue;
-            }
-            
-            if(MultCommand::IsMultCommand(line)) {
-                commands.push_back(make_shared<MultCommand>(label, line[1]));
-                continue;
-            }
-            
-            if(DivCommand::IsDivCommand(line)) {
-                commands.push_back(make_shared<DivCommand>(label, line[1]));
-                continue;
-            }
-            
-            if(JmpCommand::IsJmpCommand(line)) {
-                commands.push_back(make_shared<JmpCommand>(label, line[1]));
-                continue;
-            }
-            
-            if(JmpnCommand::IsJmpnCommand(line)) {
-                commands.push_back(make_shared<JmpnCommand>(label, line[1]));
-                continue;
-            }
-            
-            if(JmppCommand::IsJmppCommand(line)) {
-                commands.push_back(make_shared<JmppCommand>(label, line[1]));
-                continue;
-            }
-            
-            if(JmpzCommand::IsJmpzCommand(line)) {
-                commands.push_back(make_shared<JmpzCommand>(label, line[1]));
-                continue;
-            }
-            
-            if(CopyCommand::IsCopyCommand(line)) {
-                commands.push_back(make_shared<CopyCommand>(label, line[1], line[3]));
-                continue;
-            }
-            
-            if(LoadCommand::isLoadCommand(line)) {
-                commands.push_back(make_shared<LoadCommand>(label, line[1]));
-                continue;
-            }
-            
-            if(StoreCommand::isStoreCommand(line)) {
-                commands.push_back(make_shared<StoreCommand>(label, line[1]));
-                continue;
-            }
-            
-            if(InputCommand::isInputCommand(line)) {
-                commands.push_back(make_shared<InputCommand>(label, line[1]));
-                continue;
-            }
-            
-            if(OutputCommand::isOutputCommand(line)) {
-                commands.push_back(make_shared<OutputCommand>(label, line[1]));
-                continue;
-            }
-            
-            if(StopCommand::isStopCommand(line)) {
-                commands.push_back(make_shared<StopCommand>(label));
-                continue;
-            } 
+            commands.push_back(ValidateAndCreateClassObj(line, label));
 
             if((int)label.size() == 0) {
-                //pastLabels.push_back(label);
                 pastLabels = label;
                 continue;
             }
-
-            string lineStr = "";
-            for(auto &x : line) lineStr += x + " ";
-            throw runtime_error("Invalid instruction: " + lineStr);
 
         }
 
         // if((int)pastLabels.size()) {
         //     throw runtime_error("Invalid label localtion: " + pastLabels);
         // }
+
+    }
+
+    void AddLine(vector<string> line) {
+
+        if((int)line.size() == 0) {
+            return;
+        }
+
+        commands.push_back(ValidateAndCreateClassObj(line));
+
+    }
+
+    shared_ptr<Command> ValidateAndCreateClassObj(vector<string> line, string label = "") {
+
+        if(AddCommand::IsAddCommand(line)) {
+            return make_shared<AddCommand>(label, line[1]);
+        }
+
+        if(SubCommand::IsSubCommand(line)) {
+            return make_shared<SubCommand>(label, line[1]);
+        }
+        
+        if(MultCommand::IsMultCommand(line)) {
+            return make_shared<MultCommand>(label, line[1]);
+        }
+        
+        if(DivCommand::IsDivCommand(line)) {
+            return make_shared<DivCommand>(label, line[1]);
+        }
+        
+        if(JmpCommand::IsJmpCommand(line)) {
+            return make_shared<JmpCommand>(label, line[1]);
+        }
+        
+        if(JmpnCommand::IsJmpnCommand(line)) {
+            return make_shared<JmpnCommand>(label, line[1]);
+        }
+        
+        if(JmppCommand::IsJmppCommand(line)) {
+            return make_shared<JmppCommand>(label, line[1]);
+        }
+        
+        if(JmpzCommand::IsJmpzCommand(line)) {
+            return make_shared<JmpzCommand>(label, line[1]);
+        }
+        
+        if(CopyCommand::IsCopyCommand(line)) {
+            return make_shared<CopyCommand>(label, line[1], line[3]);
+        }
+        
+        if(LoadCommand::isLoadCommand(line)) {
+            return make_shared<LoadCommand>(label, line[1]);
+        }
+        
+        if(StoreCommand::isStoreCommand(line)) {
+            return make_shared<StoreCommand>(label, line[1]);
+        }
+        
+        if(InputCommand::isInputCommand(line)) {
+            return make_shared<InputCommand>(label, line[1]);
+        }
+        
+        if(OutputCommand::isOutputCommand(line)) {
+            return make_shared<OutputCommand>(label, line[1]);
+        }
+        
+        if(StopCommand::isStopCommand(line)) {
+            return make_shared<StopCommand>(label);
+        }
+
+        showErrorAndExit("Invalid instruction at text section", line);
+        return nullptr; // unreachable
 
     }
 

@@ -10,8 +10,15 @@
 #include "debug.cpp"
 #endif
 
+#ifndef DATASECTION_INCLUDED
+#define DATASECTION_INCLUDED
 #include "dataSectionParser.cpp"
+#endif
+
+#ifndef TEXT_INCLUDED
+#define TEXT_INCLUDED
 #include "textSectionParser.cpp"
+#endif
 
 using namespace std;
 

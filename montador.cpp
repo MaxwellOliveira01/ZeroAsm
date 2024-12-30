@@ -8,8 +8,11 @@
 
 #define dbg debug()
 
-#include <bits/stdc++.h>
 #include "code/preprocess.cpp"
+
+#include "code/assembler.cpp"
+
+#include <bits/stdc++.h>
 
 using namespace std;
 
@@ -28,7 +31,8 @@ int main(int argc, char *argv[]) {
         writeToFile(outputName, preProcessedResult.toString());
     } else if(toLower(extension) == "pre") {
         
-        // auto program = getProgram(path);
+        auto preProcessedResult = preProcessFile(path);
+        auto program = getProgram(preProcessedResult.DataSection, preProcessedResult.TextSection);
 
     } else {
         showErrorAndExit("Invalid file extension, it must be .asm or .pre");
