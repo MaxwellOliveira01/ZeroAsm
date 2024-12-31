@@ -9,11 +9,14 @@
 #define dbg debug()
 
 #include <bits/stdc++.h>
+#include "code/ligadorProcess.cpp"
 
 using namespace std;
 
-int main() {
-
-    // ./ligador < prog1.obj prog2.obj > prog1.e
-
+int main(int argc, char *argv[]) {
+    auto entrada = argv[1];
+    SymbolsTable st_2(entrada);
+    auto entrada = argv[2];
+    SymbolsTable st_2(entrada);
+    
 }
