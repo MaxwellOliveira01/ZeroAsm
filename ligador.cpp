@@ -14,9 +14,15 @@
 using namespace std;
 
 int main(int argc, char *argv[]) {
-    auto entrada = argv[1];
-    SymbolsTable st_2(entrada);
-    auto entrada = argv[2];
-    SymbolsTable st_2(entrada);
+    auto e1 = argv[1];
+    auto e2 = argv[2];
+    SymbolsTable st_1(e1);
+    SymbolsTable st_2(e2);
+    CodigoMontado cm(e1);
+    RelativeAddresses ra(e1);
+    SymbolsTable stG = geraTabelaGlobal(st_1, st_2);
+    for (const auto& symbol : stG.symbols) {
+        cout << symbol.toString() << std::endl;         
+    }
     
 }
