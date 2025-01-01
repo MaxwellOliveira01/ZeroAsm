@@ -241,3 +241,32 @@ bool isHexNumber(string number, int& value) { // add TESTS!!!!
     }
 
 }
+
+tuple<string, int> parseCommandShift(string argument) {
+    // INPUT NUM+2 ----> { NUM, 2 }
+
+    int shift = 0;
+
+    int pos = -1;
+
+    for(int i = 0; i < (int)argument.size(); i++) {
+        if(argument[i] == '+') {
+            pos = i;
+            break;
+        }
+    }
+
+    if(pos == -1) {
+        return { argument, 0 };
+    }
+
+    string label = argument.substr(0, pos);
+    string shiftStr = argument.substr(pos + 1);
+
+    if(!isDecNumber(shiftStr, shift) || shift < 0) {
+        showErrorAndExit("Invalid shift value: " + shiftStr);
+    }
+
+    return { label,  shift };
+
+}
