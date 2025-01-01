@@ -75,7 +75,7 @@ struct Command { // abstract
 struct AddCommand : Command {
 
     AddCommand(string label_, string value_): Command(label_, CommandType::Add) {
-        tie(arg, shift) = parseCommandShift(value_);
+        tie(arg, shift) = parseCommandArgumentShift(value_);
     };
 
     bool static IsAddCommand(vector<string> line) {
@@ -86,7 +86,7 @@ struct AddCommand : Command {
 struct SubCommand : Command {
 
     SubCommand(string label_, string value_): Command(label_, CommandType::Sub) {
-        tie(arg, shift) = parseCommandShift(value_);
+        tie(arg, shift) = parseCommandArgumentShift(value_);
     };
 
     bool static IsSubCommand(vector<string> line) {
@@ -97,7 +97,7 @@ struct SubCommand : Command {
 struct MultCommand : Command {
 
     MultCommand(string label_, string value_): Command(label_, CommandType::Mult) {
-        tie(arg, shift) = parseCommandShift(value_);
+        tie(arg, shift) = parseCommandArgumentShift(value_);
     };
 
     bool static IsMultCommand(vector<string> line) {
@@ -109,7 +109,7 @@ struct MultCommand : Command {
 struct DivCommand : Command {
 
     DivCommand(string label_, string value_): Command(label_, CommandType::Div) {
-        tie(arg, shift) = parseCommandShift(value_);
+        tie(arg, shift) = parseCommandArgumentShift(value_);
     };
 
     bool static IsDivCommand(vector<string> line) {
@@ -121,7 +121,7 @@ struct DivCommand : Command {
 struct JmpCommand : Command {
 
     JmpCommand(string label_, string value_): Command(label_, CommandType::Jmp) {
-        tie(arg, shift) = parseCommandShift(value_);
+        tie(arg, shift) = parseCommandArgumentShift(value_);
     };
 
     bool static IsJmpCommand(vector<string> line) {
@@ -133,7 +133,7 @@ struct JmpCommand : Command {
 struct JmpnCommand : Command {
 
     JmpnCommand(string label_, string value_): Command(label_, CommandType::Jmpn) {
-        tie(arg, shift) = parseCommandShift(value_);
+        tie(arg, shift) = parseCommandArgumentShift(value_);
     };
 
     bool static IsJmpnCommand(vector<string> line) {
@@ -145,7 +145,7 @@ struct JmpnCommand : Command {
 struct JmppCommand : Command {
 
     JmppCommand(string label_, string value_): Command(label_, CommandType::Jmpp) {
-        tie(arg, shift) = parseCommandShift(value_);
+        tie(arg, shift) = parseCommandArgumentShift(value_);
 
     };
 
@@ -158,7 +158,7 @@ struct JmppCommand : Command {
 struct JmpzCommand : Command {
 
     JmpzCommand(string label_, string value_): Command(label_, CommandType::Jmpz) {
-        tie(arg, shift) = parseCommandShift(value_);
+        tie(arg, shift) = parseCommandArgumentShift(value_);
     };
 
     bool static IsJmpzCommand(vector<string> line) {
@@ -172,8 +172,8 @@ struct CopyCommand : Command {
     int shift2;
     
     CopyCommand(string label_, string value1_, string value2_): Command(label_, CommandType::Copy) {
-        tie(arg, shift) = parseCommandShift(value1_);
-        tie(arg2, shift2) = parseCommandShift(value2_);
+        tie(arg, shift) = parseCommandArgumentShift(value1_);
+        tie(arg2, shift2) = parseCommandArgumentShift(value2_);
     };
 
     bool static IsCopyCommand(vector<string> line) {
@@ -189,7 +189,7 @@ struct CopyCommand : Command {
 struct LoadCommand : Command {
 
     LoadCommand(string label_, string value_): Command(label_, CommandType::Load) {
-        tie(arg, shift) = parseCommandShift(value_);
+        tie(arg, shift) = parseCommandArgumentShift(value_);
     };
 
     bool static isLoadCommand(vector<string> line) {
@@ -201,7 +201,7 @@ struct LoadCommand : Command {
 struct StoreCommand : Command {
 
     StoreCommand(string label_, string value_): Command(label_, CommandType::Store) {
-        tie(arg, shift) = parseCommandShift(value_);
+        tie(arg, shift) = parseCommandArgumentShift(value_);
     };
 
     bool static isStoreCommand(vector<string> line) {
@@ -213,7 +213,7 @@ struct StoreCommand : Command {
 struct InputCommand : Command {
 
     InputCommand(string label_, string value_): Command(label_, CommandType::Input) {
-        tie(arg, shift) = parseCommandShift(value_);
+        tie(arg, shift) = parseCommandArgumentShift(value_);
     };
 
     bool static isInputCommand(vector<string> line) {
@@ -225,7 +225,7 @@ struct InputCommand : Command {
 struct OutputCommand : Command {
 
     OutputCommand(string label_, string value_): Command(label_, CommandType::Output) {
-        tie(arg, shift) = parseCommandShift(value_);
+        tie(arg, shift) = parseCommandArgumentShift(value_);
     };
 
     bool static isOutputCommand(vector<string> line) {

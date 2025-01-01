@@ -242,8 +242,9 @@ bool isHexNumber(string number, int& value) { // add TESTS!!!!
 
 }
 
-tuple<string, int> parseCommandShift(string argument) {
+tuple<string, int> parseCommandArgumentShift(string argument) {
     // INPUT NUM+2 ----> { NUM, 2 }
+    // ADD NUM --------> { NUM, 0 }
 
     int shift = 0;
 
