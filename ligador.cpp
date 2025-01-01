@@ -24,8 +24,5 @@ int main(int argc, char *argv[]) {
     RelativeAddresses ra_2(e2);
     int fatorDeCorrecao = cm_1.values.size();
     SymbolsTable stG = geraTabelaGlobal(fatorDeCorrecao, st_1, st_2);
-    for (auto& c : stG.symbols) {
-        cout << c.toString() << std::endl;      
-    }
     corrigeEnderecos(cm_1, cm_2, stG, st_1, st_2, ra_2);
 }
