@@ -170,3 +170,74 @@ void writeToFile(string path, string content) {
     }
 
 }
+
+bool isLabelNameValid(string label) {
+    // cannot starts with a number
+    if(label[0] >= '0' && label[0] <= '9') {
+        return false;
+    }
+
+    for(auto &c : label) { // if char is not a letter or number, it must be an underscore
+        if(!isalnum(c) && c != '_') {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+bool isDecNumber(string number, int& value) { // Add tests!!!
+
+    if((int)number.size() == 0) {
+        return false;
+    }
+
+    bool neg = false;
+
+    if(number[0] == '-') {
+        neg = true;
+        number = number.substr(1);
+    }
+
+    for(auto &c : number) {
+        if(!isdigit(c)) {
+            return false;
+        }
+    }
+
+    value = stoi(number);
+
+    if(neg) value = -value;
+
+    return true;
+
+}
+
+bool isHexNumber(string number, int& value) { // add TESTS!!!!
+
+    if((int)number.size() == 0) {
+        return false;
+    }
+
+    bool neg = false;
+
+    if(number[0] == '-') {
+        neg = true;
+        number = number.substr(1);
+    }
+
+    if((int)number.size() < 3 || number[0] != '0' || tolower(number[1]) != 'x') {
+        return false;
+    }
+
+    number = number.substr(2);
+
+    try {
+        value = stoi(number, 0, 16);
+        if(neg) value = -value;
+        return true;
+    } catch(...) {
+        return false;
+    }
+
+}
