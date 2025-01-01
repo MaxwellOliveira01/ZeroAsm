@@ -100,7 +100,7 @@ bool in( int valor, vector<string> list){
     }
     return false;
 }
-void corrigeEnderecos(CodigoMontado cm_1, CodigoMontado cm_2, SymbolsTable stG, SymbolsTable usoSt_1, SymbolsTable usoSt_2, RelativeAddresses ra_2){
+void corrigeEnderecos(CodigoMontado cm_1, CodigoMontado cm_2, SymbolsTable stG, SymbolsTable usoSt_1, SymbolsTable usoSt_2, RelativeAddresses ra_1 ,RelativeAddresses ra_2){
     for (auto& simboloASerCorrigido : usoSt_1.symbols) {
         if(simboloASerCorrigido.type == uso){
             for (auto& simboloDefinido : stG.symbols) {
@@ -129,7 +129,13 @@ void corrigeEnderecos(CodigoMontado cm_1, CodigoMontado cm_2, SymbolsTable stG, 
     }
     vector<int> codigoMontadoLigado = cm_1.values;
     codigoMontadoLigado.insert(codigoMontadoLigado.end(), cm_2.values.begin(), cm_2.values.end());
-    string resultado;
+    vector<string> ends = ra_1.addresses; 
+    ends.insert(ends.end(), ra_2.addresses.begin(), ra_2.addresses.end());
+    string resultado = "R, ";
+    for (auto& c : ends) {
+        resultado +=  c+ " ";       
+    }
+    resultado+="\n";
     for (auto& c : codigoMontadoLigado) {
         resultado +=  std::to_string(c)+ " ";       
     }
