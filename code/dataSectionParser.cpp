@@ -6,104 +6,76 @@
 #include "util.cpp"
 #endif
 
+#ifndef DIRECTIVES_INCLUDED
+#define DIRECTIVES_INCLUDED
+#include "classes/directives.cpp"
+#endif
+
 using namespace std;
-
-enum DirectiveType {
-    SPACE,
-    CONST,
-};
-
-struct Directives { // abstract
-    string label;
-    DirectiveType type;
-    virtual ~Directives() = default;
-    virtual string toString() = 0;
-    Directives(string label_, DirectiveType type_) : label(label_), type(type_) {}
-};
-
-struct ConstDirective : Directives {
-    
-    // TODO: change it to int?
-    string value; // needs to handle decimal, hexadecimal and binary
-
-    ConstDirective(string label_, string value_): Directives(label_, DirectiveType::CONST), value(value_) {
-
-    };
-
-    static bool isConstDirective(vector<string> line) {
-        return (int)line.size() == 4 && toLower(line[2]) == "const";
-    }
-
-    string toString() override {
-        return label + ": CONST " + value;
-    }
-
-};
-
-struct SpaceDirective : Directives {
-
-    string value; // str?
-
-    SpaceDirective(string label_): Directives(label_, DirectiveType::SPACE) {
-        
-    }
-
-    SpaceDirective(string label_, string value_): Directives(label_, DirectiveType::SPACE), value(value_) {
-
-    }
-
-    static bool isSpaceDirective(vector<string> line) {
-        return ((int)line.size() == 3 || (int)line.size() == 4) 
-            && toLower(line[2]) == "space";
-    }
-
-    string toString() override {
-        auto s = label + ": SPACE";
-        if((int)value.size()) s += " " + value;
-        return s;
-    }
-    
-};
 
 struct Data {
 
     vector<shared_ptr<Directives>> directives;
 
-    Data() {
-        directives = vector<shared_ptr<Directives>>();
-    }
-
     Data(vector<vector<string>> parsedLines) {
         directives = vector<shared_ptr<Directives>>();
         for(auto &line : parsedLines) {
-            AddLine(line);
-        }
-    }
-
-    void AddLine(vector<string> line) {
-
-        if((int)line.size() == 0) {
-            return;
-        }
-
-        directives.push_back(ValidateAndCreateClassObj(line));
-
-    }
-
-    shared_ptr<Directives> ValidateAndCreateClassObj(vector<string> line) {
-        if(ConstDirective::isConstDirective(line)) {
             
-            return make_unique<ConstDirective>(line[0], line.back());
+            if((int)line.size() == 0) {
+                continue;
+            }
+
+            directives.push_back(ValidateAndCreateClassObj(line));
+
+        }
+    }
+
+    shared_ptr<Directives> ValidateAndCreateClassObj(vector<string> tokens) {
+
+        if(!hasLabel(tokens)) {
+            showErrorAndExit("Data section must have a label", tokens);
+            return nullptr; // unreachable
+        }
+
+        if(!isLabelNameValid(tokens[0])) {
+            showErrorAndExit("Invalid label name: " + tokens[0], tokens);
+            return nullptr; // unreachable
+        }
+
+        if(ConstDirective::isConstDirective(tokens)) {
+            
+            int value = 0;
+
+            if(!isHexNumber(tokens.back(), value)) { // add tests!!
+                if(!isDecNumber(tokens.back(), value)) {
+                    showErrorAndExit("Invalid const directive value", tokens);
+                    return nullptr; // unreachable
+                }
+            }
+
+            return make_unique<ConstDirective>(tokens[0], value);
         
-        } else if(SpaceDirective::isSpaceDirective(line)){
+        } else if(SpaceDirective::isSpaceDirective(tokens)){
 
-            auto d = (int)line.size() == 4 ?
-                SpaceDirective(line[0], line.back()) :
-                SpaceDirective(line[0]);
+            if((int)tokens.size() == 3) {
+                return make_unique<SpaceDirective>(tokens[0]);
+            } else {
 
-            return make_unique<SpaceDirective>(d);
+                int value = 0;
+
+                if(!isDecNumber(tokens.back(), value)) {
+                    showErrorAndExit("Invalid space directive value", tokens);
+                    return nullptr; // unreachable
+                } else if(value <= 0) {
+                    showErrorAndExit("Space directive value must be greater than 0", tokens);
+                    return nullptr; // unreachable
+                }
+
+                return make_unique<SpaceDirective>(tokens[0], value);
+            }
+
         } else {
-            showErrorAndExit("Invalid directive at data section", line);
+            showErrorAndExit("Invalid directive at data section", tokens);
             return nullptr; // unreachable
         }
     }

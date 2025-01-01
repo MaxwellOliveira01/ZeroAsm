@@ -20,50 +20,49 @@
 #include "textSectionParser.cpp"
 #endif
 
+#ifndef PROGRAM_INCLUDED
+#define PROGRAM_INCLUDED
+#include "classes/program.cpp"
+#endif
+
 using namespace std;
-
-struct Program {
-
-    Data data;
-    Text text;
-
-    Program(Data data_, Text text_): data(data_), text(text_) {
-
-    };
-
-};
 
 Text validateAndParseText(PreProcessedText givenText) {
 
-    auto text = Text();
+    vector<vector<string>> parsedLines;
 
     for(auto &dataLine : givenText.lines) {
+        // parsedLine should be the same as dataLine, 
+        // since givenText is already pre processed
         auto parsedLine = removeComments(getTokens(dataLine));
-        text.AddLine(parsedLine);
+        parsedLines.push_back(parsedLine);
     }
 
-    return text;
+    return Text(parsedLines);
 
 }
 
 Data validateAndParseData(PreProcessedData givenData) {
 
-    auto data = Data();
+    vector<vector<string>> parsedLines;
 
     for(auto &dataLine: givenData.lines) {
+        // parsedLine should be the same as dataLine, 
+        // since givenText is already pre processed
         auto parsedLine = removeComments(getTokens(dataLine));
-        data.AddLine(parsedLine);
+        parsedLines.push_back(parsedLine);
     }
 
-    return data;
+    return Data(parsedLines);
 }
 
 Program getProgram(PreProcessedData givenData, PreProcessedText givenText) {
 
-    // validating data section
     auto data = validateAndParseData(givenData);
-
     auto text = validateAndParseText(givenText);
+    auto program = Program(data, text);
 
-    return Program(data, text);
+    // before return we need to do some checks
+
+    return program;
 }
