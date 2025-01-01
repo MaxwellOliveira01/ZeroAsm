@@ -146,10 +146,10 @@ struct Text {
     }
 
     string toString() {
-        string s = "SECTION TEXT\n"; 
+        string s = "SECTION TEXT"; 
 
         for(auto &d : commands) {
-            s += d.get()->toString() + "\n";
+            s += "\n" + d.get()->toString();
         }
 
         return s;  

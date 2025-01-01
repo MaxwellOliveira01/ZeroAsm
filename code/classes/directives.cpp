@@ -16,6 +16,7 @@ struct Directives { // abstract
     virtual ~Directives() = default;
     virtual string toString() = 0;
     virtual int size() = 0;
+    virtual string assemble() = 0;
     Directives(string label_, DirectiveType type_) : label(label_), type(type_) {}
 };
 
@@ -33,6 +34,10 @@ struct ConstDirective : Directives {
 
     static bool isConstDirective(vector<string> line) {
         return (int)line.size() == 4 && toLower(line[2]) == "const";
+    }
+
+    string assemble() override {
+        return to_string(value);
     }
 
     string toString() override {
@@ -53,13 +58,25 @@ struct SpaceDirective : Directives {
 
     }
 
-    int size() override {
-        return value;
-    }
-
     static bool isSpaceDirective(vector<string> line) {
         return ((int)line.size() == 3 || (int)line.size() == 4) 
             && toLower(line[2]) == "space";
+    }
+
+
+    int size() override {
+        return value;
+    }    
+
+    string assemble() override {
+        string result = "";
+
+        for(int i = 0; i < value; i++) {
+            if(i) result += " ";
+            result += "00";
+        }
+
+        return result;
     }
 
     string toString() override {

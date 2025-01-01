@@ -64,5 +64,37 @@ Program getProgram(PreProcessedData givenData, PreProcessedText givenText) {
 
     // before return we need to do some checks
 
+    auto symbolsTable = program.createSymbolsTable();
+
+    for(auto &cmdpointer: program.text.commands) {
+        auto command = cmdpointer.get();
+
+        if(command->type == CommandType::Stop) {
+            continue;
+        }
+
+        if(symbolsTable.find(command->arg) == symbolsTable.end()) {
+            showErrorAndExit("'" + command->arg + "' is not defined");
+        } else {
+            // do we need to block the case of A + x, where A is CONST?
+            // do we need to block the case of A + 1, when A is just an label on text section?
+            // do we need to block the case of A + 10, when A is an label to SPACE 5?
+        }
+
+        if(command->type == CommandType::Copy) {
+            auto copyCommand = dynamic_cast<CopyCommand*>(command);
+
+            if(symbolsTable.find(copyCommand->arg2) == symbolsTable.end()) {
+                showErrorAndExit("'" + copyCommand->arg2 + "' is not defined");
+            } else {
+                // do we need to block the case of A + x, where A is CONST?
+                // do we need to block the case of A + 1, when A is just an label on text section?
+                // do we need to block the case of A + 10, when A is an label to SPACE 5?
+            }
+
+        }
+
+    }
+
     return program;
 }
