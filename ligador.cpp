@@ -18,11 +18,14 @@ int main(int argc, char *argv[]) {
     auto e2 = argv[2];
     SymbolsTable st_1(e1);
     SymbolsTable st_2(e2);
-    CodigoMontado cm(e1);
-    RelativeAddresses ra(e1);
-    SymbolsTable stG = geraTabelaGlobal(st_1, st_2);
-    for (const auto& symbol : stG.symbols) {
-        cout << symbol.toString() << std::endl;         
+    CodigoMontado cm_1(e1);
+    CodigoMontado cm_2(e2);
+    RelativeAddresses ra_1(e1);
+    RelativeAddresses ra_2(e2);
+    int fatorDeCorrecao = cm_1.values.size();
+    SymbolsTable stG = geraTabelaGlobal(fatorDeCorrecao, st_1, st_2);
+    for (auto& c : stG.symbols) {
+        cout << c.toString() << std::endl;      
     }
-    
+    corrigeEnderecos(cm_1, cm_2, stG, st_1, st_2, ra_2);
 }
