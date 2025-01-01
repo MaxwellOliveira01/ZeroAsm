@@ -80,11 +80,21 @@ struct Data {
         }
     }
 
+    bool LabelIsConst(string label) {
+        for(auto &d : directives) {
+            if(d.get()->label == label && d.get()->type == DirectiveType::CONST) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     string toString() {
-        string s = "SECTION DATA\n"; 
+        string s = "SECTION DATA"; 
 
         for(auto &d : directives) {
-            s += d.get()->toString() + "\n";
+            s += "\n" + d.get()->toString();
         }
 
         return s;        

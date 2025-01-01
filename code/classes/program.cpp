@@ -18,7 +18,7 @@ struct Program {
     Text text;
 
     Program(Data data_, Text text_): data(data_), text(text_) {
-        auto _ = createSymbolsTable(); // just to check if it's valid
+        auto _ = createSymbolsTable(); // just to check perform some validations
     };
 
     map<string, int> createSymbolsTable() {
@@ -51,13 +51,13 @@ struct Program {
          
             currentPos += directive->size();
         }
-    
+
         return table;
 
     }
 
     string toString() {
-        return data.toString() + "\n" + text.toString();
+        return text.toString() + "\n" + data.toString();
     }
 
 };
