@@ -64,7 +64,7 @@ struct Program {
 
 
 /*
-Rotulo ausente
+Rotulo ausente OK
 Rotulo dobrado na mesma linha OK
 Rotudo redefinido OK
 Numero de operandos errada p uma instrucao
