@@ -26,14 +26,12 @@ int main(int argc, char *argv[]) {
 
     if(toLower(extension) == "asm") {
         string outputName = fileName + ".pre"; 
-        writeToFile(outputName, ""); // just create an empty file for now
         auto preProcessedResult = preProcessFile(path);
         writeToFile(outputName, preProcessedResult.toString());
     } else if(toLower(extension) == "pre") {
-        
         auto preProcessedResult = preProcessFile(path);
         auto program = getProgram(preProcessedResult.DataSection, preProcessedResult.TextSection);
-
+        writeToFile(fileName + ".obj", program.assemble());
     } else {
         showErrorAndExit("Invalid file extension, it must be .asm or .pre");
     }

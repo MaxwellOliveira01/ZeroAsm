@@ -21,6 +21,25 @@ struct Program {
         auto _ = createSymbolsTable(); // just to check perform some validations
     };
 
+    string assemble() {
+        auto symbolsTable = createSymbolsTable();
+        string result = "";
+
+        for(int i = 0; i < (int)text.commands.size(); i++) {
+            auto command = text.commands[i].get();
+            if((int)result.size() && result.back() != ' ') result += " ";
+            result += command->assemble(symbolsTable);
+        }
+
+        for(int i = 0; i < (int)data.directives.size(); i++) {
+            auto directive = data.directives[i].get();
+            if((int)result.size() && result.back() != ' ') result += " ";
+            result += directive->assemble();
+        }
+
+        return result;
+    }
+
     map<string, int> createSymbolsTable() {
         map<string, int> table;
         int currentPos = 0;

@@ -45,13 +45,32 @@ vector<string> CommandTypeStrings = {
     "STOP",
 };
 
+vector<string> CommandOpcodes = {
+    "01",
+    "02",
+    "03",
+    "04",
+    "05",
+    "06",
+    "07",
+    "08",
+    "09",
+    "10",
+    "11",
+    "12",
+    "13",
+    "14",
+};
+
 struct Command { // abstract
-    string label;
-    string arg;
+    string label, arg;
     int shift = 0;
     CommandType type;
     virtual ~Command() = default;
-    
+
+    Command(string label_, CommandType type_) : label(label_), type(type_) {}
+    Command(CommandType type_) : label(""), type(type_) {}
+
     virtual string toString() {
         return ((int)label.size() ? label + ": " : "") + CommandTypeStrings[type] + " " + arg + (shift > 0 ? "+" + to_string(shift) : "");
     }
@@ -68,8 +87,11 @@ struct Command { // abstract
         return 2;
     };
 
-    Command(string label_, CommandType type_) : label(label_), type(type_) {}
-    Command(CommandType type_) : label(""), type(type_) {}
+    virtual string assemble(map<string, int> symbolsTable) {
+        // COPY and STOP must override, the others are the same
+        return CommandOpcodes[type] + " " + to_string(symbolsTable[arg] + shift);
+    }
+
 }; 
 
 struct AddCommand : Command {
@@ -180,6 +202,10 @@ struct CopyCommand : Command {
         return (int)line.size() && toLower(line[0]) == "copy";
     }
 
+    string assemble(map<string, int> symbolsTable) override {
+        return CommandOpcodes[type] + " " + to_string(symbolsTable[arg] + shift) + " " + to_string(symbolsTable[arg2] + shift2);
+    }
+
     string toString() override {
         return (!label.empty() ? label + ": " : "") + "COPY " + arg + (shift > 0 ? "+" + to_string(shift) : "")
             + "," + arg2 + (shift2 > 0 ? "+" + to_string(shift2) : "");
@@ -242,6 +268,10 @@ struct StopCommand : Command {
 
     bool static isStopCommand(vector<string> line) {
         return (int)line.size() && toLower(line[0]) == "stop";
+    }
+
+    string assemble(map<string, int> symbolsTable) override {
+        return CommandOpcodes[type];
     }
 
     string toString() override {
