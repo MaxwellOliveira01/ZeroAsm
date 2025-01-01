@@ -45,7 +45,7 @@ struct SpaceDirective : Directives {
 
     int value;
 
-    SpaceDirective(string label_): Directives(label_, DirectiveType::SPACE), value(0) {
+    SpaceDirective(string label_): Directives(label_, DirectiveType::SPACE), value(1) {
         
     }
 
@@ -54,7 +54,7 @@ struct SpaceDirective : Directives {
     }
 
     int size() override {
-        return 1 + value;
+        return value;
     }
 
     static bool isSpaceDirective(vector<string> line) {
