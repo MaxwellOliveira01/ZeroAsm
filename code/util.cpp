@@ -67,6 +67,7 @@ void showErrorAndExit(string message, vector<string> tokens) {
     }
 
     cout << "]\n";
+    exit(-1);
 }
 
 pair<string, string> parseFileName(string path) {
