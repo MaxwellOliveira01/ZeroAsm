@@ -1,7 +1,7 @@
-EXEC_L = ligador.exe
+EXEC_L = ligador
 SRC_L = ligador.cpp
 
-EXEC_M = montador.exe
+EXEC_M = montador
 SRC_M = montador.cpp
 
 CXX = g++
