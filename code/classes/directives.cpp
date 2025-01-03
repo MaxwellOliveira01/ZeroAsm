@@ -73,7 +73,7 @@ struct SpaceDirective : Directives {
 
         for(int i = 0; i < value; i++) {
             if(i) result += " ";
-            result += "00";
+            result += "0";
         }
 
         return result;
