@@ -24,14 +24,20 @@ int main(int argc, char *argv[]) {
     auto path = argv[1];
     auto [fileName, extension] = parseFileName(path);
 
+    auto preProcessedResult = preProcessFile(path);
+
     if(toLower(extension) == "asm") {
         string outputName = fileName + ".pre"; 
-        auto preProcessedResult = preProcessFile(path);
         writeToFile(outputName, preProcessedResult.toString());
     } else if(toLower(extension) == "pre") {
-        auto preProcessedResult = preProcessFile(path);
         auto program = getProgram(preProcessedResult.DataSection, preProcessedResult.TextSection);
-        writeToFile(fileName + ".obj", program.assemble());
+        
+        if(program.text.isAnModule()) {
+            writeToFile(fileName + ".obj", program.assembleToLink());
+        } else {
+            writeToFile(fileName + ".obj", program.assemble());
+        }
+
     } else {
         showErrorAndExit("Invalid file extension, it must be .asm or .pre");
     }

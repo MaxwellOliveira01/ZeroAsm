@@ -26,8 +26,6 @@ struct PreProcessedProgram {
     PreProcessedData DataSection;
     PreProcessedText TextSection;
 
-    PreProcessedProgram() = default;
-
     PreProcessedProgram(PreProcessedText text, PreProcessedData data) {
         DataSection = data;
         TextSection = text;

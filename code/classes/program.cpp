@@ -71,7 +71,125 @@ struct Program {
             currentPos += directive->size();
         }
 
+        for(auto &ext : text.externLabels) {
+
+            if(table.find(ext) != table.end()) {
+                showErrorAndExit("Label " + ext + " already defined");
+            }
+
+            table[ext] = 0; // absolute 0
+
+        }
+
         return table;
+
+    }
+
+    bool isAnModule() {
+        return text.isAnModule();
+    }
+
+    string assembleToLink() {
+
+        string res = "";
+        
+        auto s = createSymbolsTable();
+
+        { // D [definition]
+            auto publicSymbols = vector<string>(text.publicLabels.begin(), text.publicLabels.end());
+
+            sort(publicSymbols.begin(), publicSymbols.end(), [&](auto a, auto b) {
+                return s[a] < s[b];
+            });
+
+            for(auto &x : publicSymbols) {
+                res += "D, " + x + " " + to_string(s[x]) + "\n";
+            }
+        }
+
+        { // U [use]
+
+            vector<pair<string, int>> externSymbols;
+
+            int currentPos = 0;
+
+            for(auto &cmdpointer: text.commands) {
+                auto command = cmdpointer.get();
+
+                if(text.externLabels.find(command->arg) != text.externLabels.end()) {
+                    externSymbols.push_back({command->arg, currentPos + 1});
+                }
+
+                if(command->type == CommandType::Copy) {
+                    auto cpy = dynamic_cast<CopyCommand*>(command);
+
+                    if(text.externLabels.find(cpy->arg2) != text.externLabels.end()) {
+                        externSymbols.push_back({cpy->arg2, currentPos + 2});
+
+                    }
+
+                }
+                
+                currentPos += command->size();
+            }
+
+            for(auto &x : externSymbols) {
+                res += "U, " + x.first + " " + to_string(x.second) + "\n";
+            }
+
+        }
+
+        { // R [relative]
+
+            res += "R,";
+
+            for(auto &cmd : text.commands) {
+                auto command = cmd.get();
+
+                res += " 0";
+
+                if(command->type == CommandType::Stop) {
+                    continue;
+                }
+
+                if(text.externLabels.count(command->arg)) {
+                    res += " 0";
+                } else {
+                    res += " 1";
+                }
+
+                if(command->type == CommandType::Copy) {
+                    auto cpy = dynamic_cast<CopyCommand*>(command);
+
+                    if(text.externLabels.count(cpy->arg2)) {
+                        res += " 0";
+                    } else {
+                        res += " 1";
+                    }   
+                }
+
+            }
+
+            for(auto &dir : data.directives) {
+                auto directive = dir.get();
+                
+                for(int i = 0; i < directive->size(); i++) {
+                    res += " 0";
+                }
+
+            }
+
+            res += "\n";
+
+        }
+
+        { // [asm]
+        
+            res += assemble();
+
+        }
+
+        return res;
 
     }
 
