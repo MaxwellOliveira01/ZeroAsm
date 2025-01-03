@@ -23,6 +23,12 @@ using namespace std;
 
 struct Text {
     vector<shared_ptr<Command>> commands;
+    
+    set<string> externLabels;
+    set<string> publicLabels;
+
+    string moduleName = "";
+    bool hasBegin = false, hasEnd = false;
 
     Text(vector<vector<string>> parsedLines) {
         commands = vector<shared_ptr<Command>>();
@@ -37,6 +43,18 @@ struct Text {
             string label = "";
 
             if(hasLabel(line)) {
+                
+                if(toLower(line[0]) == "begin") {
+
+                    if((int)line.size() <= 2) {
+                        showErrorAndExit("Module must have a name", line);
+                    }
+
+                    hasBegin = true;
+                    moduleName = line[2];
+                    continue;
+                }
+
                 if((int)pastLabels.size()) {
                     // Bringing an label of an empty line to current line would make 
                     // it invalid (more than one label in a row)
@@ -62,13 +80,24 @@ struct Text {
                 pastLabels = "";
             }
 
-            commands.push_back(ValidateAndCreateClassObj(label, line));
-
-            if((int)label.size() == 0) {
+            if((int)line.size() && toLower(line[0]) == "end") {
+                hasEnd = true;
                 pastLabels = label;
                 continue;
             }
 
+            auto cmd = ValidateAndCreateClassObj(label, line);
+
+            if(cmd != nullptr) {
+                commands.push_back(cmd);
+            }
+
+        }
+
+        if(hasBegin && !hasEnd) {
+            showErrorAndExit("Module has begin, but doenst have end");
+        } else if(!hasBegin && hasEnd) {
+            showErrorAndExit("Module has end, but doesnt have begin");
         }
 
         // if((int)pastLabels.size()) {
@@ -82,6 +111,33 @@ struct Text {
         if((int)label.size() && !isLabelNameValid(label)) {
             showErrorAndExit("Invalid label name: '" + label + "'");
             return nullptr; // unreachable
+        }
+
+        if(hasBegin) {
+
+            if((int)line.size() && toLower(line[0]) == "extern") {
+                if(!(int)label.size()) {
+                    showErrorAndExit("Extern must have an non empty label");
+                }
+                externLabels.insert(label);
+                return nullptr;
+            }
+
+            if((int)line.size() && toLower(line[0]) == "public") {
+
+                // if((int)label.size()) {
+                //     showErrorAndExit("You cannot have an label to an public field");
+                // }
+
+                if((int)line.size() != 2) {
+                    showErrorAndExit("Public field must exactly one field after", line);
+                }
+
+                publicLabels.insert(line[1]);
+                return nullptr;
+
+            }
+
         }
 
         if(AddCommand::IsAddCommand(line)) {
@@ -143,6 +199,10 @@ struct Text {
         showErrorAndExit("Invalid instruction", line);
         return nullptr; // unreachable
 
+    }
+
+    bool isAnModule() {
+        return (int)moduleName.size() > 0;
     }
 
     string toString() {
