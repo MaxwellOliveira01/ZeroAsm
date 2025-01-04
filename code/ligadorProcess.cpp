@@ -131,11 +131,7 @@ void corrigeEnderecos(CodigoMontado cm_1, CodigoMontado cm_2, SymbolsTable stG, 
     codigoMontadoLigado.insert(codigoMontadoLigado.end(), cm_2.values.begin(), cm_2.values.end());
     vector<string> ends = ra_1.addresses; 
     ends.insert(ends.end(), ra_2.addresses.begin(), ra_2.addresses.end());
-    string resultado = "R, ";
-    for (auto& c : ends) {
-        resultado +=  c+ " ";       
-    }
-    resultado+="\n";
+    string resultado = "";
     for (auto& c : codigoMontadoLigado) {
         resultado +=  std::to_string(c)+ " ";       
     }
