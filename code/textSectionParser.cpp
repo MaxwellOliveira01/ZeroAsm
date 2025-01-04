@@ -336,13 +336,10 @@ struct PreProcessedText {
     }
 
     string toString() {
-        string s = "SECTION TEXT\n";
+        string s = "SECTION TEXT";
 
         for(int i = 0; i < (int)lines.size(); i++) {
-            s += lines[i];
-            if(i + 1 < (int)lines.size()) {
-                s += "\n";
-            }
+            s += "\n" + lines[i];
         }
         
         return s;  

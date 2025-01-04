@@ -134,13 +134,10 @@ struct PreProcessedData {
     }
 
     string toString() {
-        string s = "SECTION DATA\n";
+        string s = "SECTION DATA";
 
         for(int i = 0; i < (int)lines.size(); i++) {
-            s += lines[i];
-            if(i + 1 < (int)lines.size()) {
-                s += "\n";
-            }
+            s += "\n" + lines[i];
         }
         
         return s;  
