@@ -204,7 +204,7 @@ struct Program {
 Rotulo ausente OK
 Rotulo dobrado na mesma linha OK
 Rotudo redefinido OK
-Numero de operandos errada p uma instrucao
+Numero de operandos errada p uma instrucao OK
 Erros lexicos de rotulos OK
 Instrução ou diretiva inválida OK
 */

@@ -75,17 +75,21 @@ struct Command { // abstract
         return ((int)label.size() ? label + ": " : "") + CommandTypeStrings[type] + " " + arg + (shift > 0 ? "+" + to_string(shift) : "");
     }
     
-    int size() {
-        if(type == CommandType::Copy) {
+    static int size(CommandType commandType) {
+        if(commandType == CommandType::Copy) {
             return 3;
         }
 
-        if(type == CommandType::Stop) {
+        if(commandType == CommandType::Stop) {
             return 1;
         }
 
         return 2;
     };
+
+    int size() {
+        return size(type);
+    }
 
     virtual string assemble(map<string, int> symbolsTable) {
         // COPY and STOP must override, the others are the same

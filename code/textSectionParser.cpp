@@ -141,58 +141,128 @@ struct Text {
         }
 
         if(AddCommand::IsAddCommand(line)) {
+
+            if((int)line.size() != Command::size(CommandType::Add)) {
+                showErrorAndExit("Invalid number of arguments", line);
+            }
+
             return make_shared<AddCommand>(label, line[1]);
         }
 
         if(SubCommand::IsSubCommand(line)) {
+
+            if((int)line.size() != Command::size(CommandType::Sub)) {
+                showErrorAndExit("Invalid number of arguments", line);
+            }
+
             return make_shared<SubCommand>(label, line[1]);
         }
         
         if(MultCommand::IsMultCommand(line)) {
+
+            if((int)line.size() != Command::size(CommandType::Mult)) {
+                showErrorAndExit("Invalid number of arguments", line);
+            }
+
             return make_shared<MultCommand>(label, line[1]);
         }
         
         if(DivCommand::IsDivCommand(line)) {
+
+            if((int)line.size() != Command::size(CommandType::Div)) {
+                showErrorAndExit("Invalid number of arguments", line);
+            }
+
             return make_shared<DivCommand>(label, line[1]);
         }
         
         if(JmpCommand::IsJmpCommand(line)) {
+
+            if((int)line.size() != Command::size(CommandType::Jmp)) {
+                showErrorAndExit("Invalid number of arguments", line);
+            }
+
             return make_shared<JmpCommand>(label, line[1]);
         }
         
         if(JmpnCommand::IsJmpnCommand(line)) {
+            
+            if((int)line.size() != Command::size(CommandType::Jmpn)) {
+                showErrorAndExit("Invalid number of arguments", line);
+            }
+
             return make_shared<JmpnCommand>(label, line[1]);
         }
         
         if(JmppCommand::IsJmppCommand(line)) {
+            
+            if((int)line.size() != Command::size(CommandType::Jmpp)) {
+                showErrorAndExit("Invalid number of arguments", line);
+            }
+
             return make_shared<JmppCommand>(label, line[1]);
         }
         
         if(JmpzCommand::IsJmpzCommand(line)) {
+            
+            if((int)line.size() != Command::size(CommandType::Jmpz)) {
+                showErrorAndExit("Invalid number of arguments", line);
+            }
+
             return make_shared<JmpzCommand>(label, line[1]);
         }
         
         if(CopyCommand::IsCopyCommand(line)) {
+            
+            if((int)line.size() != Command::size(CommandType::Copy)) {
+                showErrorAndExit("Invalid number of arguments", line);
+            }
+
             return make_shared<CopyCommand>(label, line[1], line[3]);
         }
         
         if(LoadCommand::isLoadCommand(line)) {
+            
+            if((int)line.size() != Command::size(CommandType::Load)) {
+                showErrorAndExit("Invalid number of arguments", line);
+            }
+
             return make_shared<LoadCommand>(label, line[1]);
         }
         
         if(StoreCommand::isStoreCommand(line)) {
+            
+            if((int)line.size() != Command::size(CommandType::Store)) {
+                showErrorAndExit("Invalid number of arguments", line);
+            }
+
             return make_shared<StoreCommand>(label, line[1]);
         }
         
         if(InputCommand::isInputCommand(line)) {
+            
+            if((int)line.size() != Command::size(CommandType::Input)) {
+                showErrorAndExit("Invalid number of arguments", line);
+            }
+
             return make_shared<InputCommand>(label, line[1]);
         }
         
         if(OutputCommand::isOutputCommand(line)) {
+            
+            if((int)line.size() != Command::size(CommandType::Output)) {
+                showErrorAndExit("Invalid number of arguments", line);
+            }
+
             return make_shared<OutputCommand>(label, line[1]);
         }
         
         if(StopCommand::isStopCommand(line)) {
+            
+            if((int)line.size() != Command::size(CommandType::Stop)) {
+                showErrorAndExit("Invalid number of arguments", line);
+            }
+
             return make_shared<StopCommand>(label);
         }
 
