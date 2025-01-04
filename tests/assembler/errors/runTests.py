@@ -18,7 +18,7 @@ for folder in ["generalErrors", "fewArguments", "tooManyArguments"]:
 
         input_file = os.path.join(folder, tests[testNum])
 
-        result = subprocess.run(["./../../cod", input_file], capture_output=True, text=True)
+        result = subprocess.run(["./../../../cod", input_file], capture_output=True, text=True)
 
         if(result.returncode == 0):
             print(f"{BOLD}{RED}Failed{RESET}. It should detect an error")
