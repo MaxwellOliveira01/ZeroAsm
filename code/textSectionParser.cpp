@@ -320,12 +320,17 @@ struct PreProcessedText {
                 result += x + ": ";
             }
 
-            // "instruction" + space if its different from stop
-            result += line[0] + ((int)line.size() > 1 ? " " : ""); 
+            // "instruction"
+            result += line[0]; 
 
-            // arguments in the same way as the input
             for(int i = 1; i < (int)line.size(); i++) {
-                result += line[i];
+                if((int)result.size() && (result.back() == ',' || result.back() == '+')) {
+                    result += line[i];
+                } else if(line[i][0] == ',' || line[i][0] == '+') {
+                    result += line[i];
+                } else {
+                    result += " " + line[i];
+                }
             }
 
             lines.push_back(result);
