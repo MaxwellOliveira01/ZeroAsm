@@ -37,5 +37,8 @@
 cod
 montador
 ligador
-./pre
-./obj
+*.pre
+
+# allow .pre or .obj only on tests folder
+!tests/**/*.obj
+!tests/**/*.pre

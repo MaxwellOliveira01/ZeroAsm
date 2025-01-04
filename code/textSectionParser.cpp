@@ -214,7 +214,7 @@ struct Text {
         
         if(CopyCommand::IsCopyCommand(line)) {
             
-            if((int)line.size() != Command::size(CommandType::Copy)) {
+            if((int)line.size() != Command::size(CommandType::Copy) + 1 /* comma after arg1 */) {
                 showErrorAndExit("Invalid number of arguments", line);
             }
 
