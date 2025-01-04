@@ -44,17 +44,6 @@ struct Text {
 
             if(hasLabel(line)) {
                 
-                if(toLower(line[0]) == "begin") {
-
-                    if((int)line.size() <= 2) {
-                        showErrorAndExit("Module must have a name", line);
-                    }
-
-                    hasBegin = true;
-                    moduleName = line[2];
-                    continue;
-                }
-
                 if((int)pastLabels.size()) {
                     // Bringing an label of an empty line to current line would make 
                     // it invalid (more than one label in a row)
@@ -80,10 +69,43 @@ struct Text {
                 pastLabels = "";
             }
 
-            if((int)line.size() && toLower(line[0]) == "end") {
-                hasEnd = true;
-                pastLabels = label;
+            //MOD1: BEGIN
+
+            if((int)line.size() && toLower(line[0]) == "begin") {
+                if(hasBegin) {
+                    showErrorAndExit("Module has more than one begin");
+                }
+                if(!(int)label.size()) {
+                    showErrorAndExit("Module must have an non empty label");
+                }
+                hasBegin = true;
+                moduleName = label;
                 continue;
+            }
+
+            if((int)line.size() && toLower(line[0]) == "end") {
+                if(hasEnd) {
+                    showErrorAndExit("Module has more than one end");
+                }
+                hasEnd = true;
+                continue;
+            }
+
+            if((int)line.size() && toLower(line[0]) == "extern") {
+                if(!(int)label.size()) {
+                    showErrorAndExit("Extern must have an non empty label");
+                }
+                externLabels.insert(label);
+                continue;
+            }
+
+            if((int)line.size() && toLower(line[0]) == "public") {
+                if((int)line.size() != 2) {
+                    showErrorAndExit("Public field must exactly one field after", line);
+                }
+                publicLabels.insert(line[1]);
+                continue;
+
             }
 
             auto cmd = ValidateAndCreateClassObj(label, line);
@@ -111,33 +133,6 @@ struct Text {
         if((int)label.size() && !isLabelNameValid(label)) {
             showErrorAndExit("Invalid label name: '" + label + "'");
             return nullptr; // unreachable
-        }
-
-        if(hasBegin) {
-
-            if((int)line.size() && toLower(line[0]) == "extern") {
-                if(!(int)label.size()) {
-                    showErrorAndExit("Extern must have an non empty label");
-                }
-                externLabels.insert(label);
-                return nullptr;
-            }
-
-            if((int)line.size() && toLower(line[0]) == "public") {
-
-                // if((int)label.size()) {
-                //     showErrorAndExit("You cannot have an label to an public field");
-                // }
-
-                if((int)line.size() != 2) {
-                    showErrorAndExit("Public field must exactly one field after", line);
-                }
-
-                publicLabels.insert(line[1]);
-                return nullptr;
-
-            }
-
         }
 
         if(AddCommand::IsAddCommand(line)) {

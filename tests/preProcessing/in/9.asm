@@ -1,5 +1,6 @@
 SECTION TEXT ;abc
-BEGIN: MOD1;abc
+MOD1: BEGIN ;abc
 INPUT NUM;abc
+END;asdas
 SECTION DATA    ;abc
 NUM: SPACE 1    ;abc
