@@ -114,7 +114,7 @@ vector<string> getTokens(string line) {
     set<char> separators = {',', ':', ';'};
 
     auto pushIfNeeded = [&](bool resetAfter = false) {
-        if(currentToken.size() > 0) {
+        if((int)currentToken.size() > 0) {
             tokens.push_back(currentToken);
         }
 

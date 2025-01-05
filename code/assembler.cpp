@@ -31,7 +31,7 @@ Text validateAndParseText(PreProcessedText givenText) {
 
     vector<vector<string>> parsedLines;
 
-    for(auto &dataLine : givenText.lines) {
+    for(auto &dataLine : givenText.body) {
         // parsedLine should be the same as dataLine, 
         // since givenText is already pre processed
         auto parsedLine = removeComments(getTokens(dataLine));

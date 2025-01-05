@@ -282,26 +282,71 @@ struct Text {
 
 };
 
+struct Macro {
+
+    string name;
+    vector<string> args;
+    vector<vector<string>> body;
+
+    Macro() = default;
+
+    Macro(string name_, vector<string> args_, vector<vector<string>> body_) {
+        name = name_;
+        args = args_;
+        body = body_;
+    }
+
+    vector<vector<string>> apply(vector<string> lineArgs) {
+        
+        // if((int)lineArgs.size() != (int)args.size()) { // idk if pre processor should throw errors
+        //     showErrorAndExit("Invalid number of arguments in macro " + name);
+        // }
+
+        map<string, string> argsMap;
+
+        for(int i = 0; i < (int)args.size(); i++) {
+            argsMap[args[i]] = i < (int)lineArgs.size() ? lineArgs[i] : args[i];
+        }
+
+        vector<vector<string>> afterApply;
+
+        for(auto &line : body) {
+            vector<string> newLine;
+
+            for(auto &token : line) {
+                newLine.push_back( argsMap.count(token) ? argsMap[token] : token );
+            }
+
+            afterApply.push_back(newLine);
+        }
+
+        return afterApply;
+    }
+
+};
+
 struct PreProcessedText {
 
-    vector<string> lines;
+    vector<string> body;   
+    map<string, Macro> macrosTable;
+
+    // vector<Macro> macros;
+    // vector<string> mnt; // macro name table
+    // vector<string> mdt; // macro definition table
 
     PreProcessedText() = default;
 
-    PreProcessedText(vector<vector<string>> parsedLines) {
-        lines = vector<string>();
+    PreProcessedText(vector<vector<string>> lineTokens) {
 
-        vector<string> pastLabels;
+        auto lineTokensWithoutMacros = buildMacrosTableAndGetCleanText(lineTokens);
+        auto lineTokensWithoutEmptyLabels = vector<vector<string>>();
 
-        for(auto &line : parsedLines) {
-            if((int)line.size() == 0) {
-                continue;
-            }
+        string label = "";
 
-            string label = "";
+        for(auto &line : lineTokensWithoutMacros) {
 
-            if(hasLabel(line)) {
-                pastLabels.push_back(line[0]);
+            while(hasLabel(line)) {
+                label += line[0] + ": ";
                 line = split(line, 2, (int)line.size());
             }
 
@@ -309,37 +354,129 @@ struct PreProcessedText {
                 continue;
             }
 
-            string result = "";
+            auto tmp = line;
 
-            for(auto &x : pastLabels) {
-                result += x + ": ";
+            if((int)label.size()) {
+                tmp.insert(tmp.begin(), label);
             }
 
-            // "instruction"
-            result += line[0]; 
+            // just to ensure NUM + k will be in the same token
+            lineTokensWithoutEmptyLabels.push_back(getTokens(buildLineStr(tmp))); 
 
-            for(int i = 1; i < (int)line.size(); i++) {
-                if((int)result.size() && (result.back() == ',' || result.back() == '+')) {
-                    result += line[i];
-                } else if(line[i][0] == ',' || line[i][0] == '+') {
-                    result += line[i];
-                } else {
-                    result += " " + line[i];
-                }
-            }
-
-            lines.push_back(result);
-
-            pastLabels.clear();
-
+            label = "";
         }
+
+        applyMacros(lineTokensWithoutEmptyLabels);
+
+        for(auto &line : lineTokensWithoutEmptyLabels) {
+            debug(line, buildLineStr(line));
+            body.push_back(buildLineStr(line));
+        }
+
+    }
+
+    vector<vector<string>> buildMacrosTableAndGetCleanText(vector<vector<string>> lineTokens) {
+        
+        vector<vector<string>> lineTokensWithoutMacros;
+
+        for(int i = 0; i < (int)lineTokens.size(); i++) {
+            if((int)lineTokens[i].size() == 0) continue;
+            
+            // we can ignore macros without names because we cant use them
+            if(!hasLabel(lineTokens[i]) || (int)lineTokens[i].size() < 3 || toLower(lineTokens[i][2]) != "macro") {
+                lineTokensWithoutMacros.push_back(lineTokens[i]);
+                continue;
+            }
+
+            auto name = lineTokens[i][0];
+            auto args = split(lineTokens[i], 3, (int)lineTokens[i].size()); // ignoring label, ':', and 'macro'
+            auto macroBody = vector<vector<string>>();
+
+            int j = i;
+
+            while(++j < (int)lineTokens.size()) {
+                int pk = hasLabel(lineTokens[j]) ? 2 : 0;
+                
+                if(toLower(lineTokens[j][pk]) == "endmacro") {
+                    break;
+                }
+
+                macroBody.push_back(lineTokens[j]);
+            }
+
+            macrosTable[name] = Macro(name, args, macroBody);
+
+            i = j; // skip macro lines
+        }
+
+        return lineTokensWithoutMacros;
+
+    }
+
+    void applyMacros(vector<vector<string>>& lines) {
+
+        /*
+        One macro can call another macro, so we need to solve these dependencies.
+        The easiest way to do this is just try to apply all macros N times, where N is the number of macros.
+        This works because we have two scenarios:
+            1 - Theres an cycle in the macros, so we cant solve it in anyway
+            2 - If theres no cycle, the graph of dependencies is a Directed Acyclic Graph (DAG)
+                and in DAGs with N nodes, the longest path is N - 1, so if we try to apply all macros N times,
+                all depedencies will be solved. This algorithm use the ideia of BellmanFord algorithm to find shortest path
+        */
+
+        for(int k = 0; k < (int)macrosTable.size() + 1; k++) {
+
+            vector<vector<string>> newLines;
+
+            for(auto &line : lines) {
+                int p = hasLabel(line) ? 2 : 0;
+
+                if(p < (int)line.size() && macrosTable.count(line[p])) {
+                    // get the arguments and apply the macro
+                    auto macro = macrosTable[line[p]];
+                    auto args = split(line, p + 1, (int)line.size());
+                    auto appliedMacro = macro.apply(args); 
+                    newLines.insert(newLines.end(), appliedMacro.begin(), appliedMacro.end());
+                } else {
+                    // just copy line
+                    newLines.push_back(line);
+                }
+
+            }
+
+            lines = newLines;
+        }
+
+    }
+
+    string buildLineStr(vector<string> tokens) {
+
+        // "instruction"
+        string result = tokens[0]; 
+
+        set<char> dontNeedSpaceBefore = {',', '+', ':'};
+        set<char> dontNeedSpaceAfter = {',', '+'};
+
+        for(int k = 1; k < (int)tokens.size(); k++) {
+            if((int)result.size() && dontNeedSpaceAfter.count(result.back())) {
+                result += tokens[k];
+            } else if(dontNeedSpaceBefore.count(tokens[k][0])) {
+                result += tokens[k];
+            } else {
+                result += " " + tokens[k];
+            }
+        }
+
+        return result;
+
     }
 
     string toString() {
         string s = "SECTION TEXT";
 
-        for(int i = 0; i < (int)lines.size(); i++) {
-            s += "\n" + lines[i];
+        for(int i = 0; i < (int)body.size(); i++) {
+            s += "\n" + body[i];
         }
         
         return s;  
