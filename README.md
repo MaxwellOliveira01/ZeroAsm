@@ -14,4 +14,4 @@ O ligador.exe é executado da seguinte maneira:
 ```bash
     ./ligador.exe codigo_1.obj codigo_2.obj
 ```
-Onde 'codigo_1.obj' e 'codigo_2.obj' são objetos já montados. A saída do ligador é um arquivo de nome 'prog1.e', composto por somente o código montado já ligado.
+Onde 'codigo_1.obj' e 'codigo_2.obj' são objetos já montados, importante mencionar que os arquivos devem estar em ordem. A saída do ligador é um arquivo de nome 'prog1.e', composto por somente o código montado já ligado.
