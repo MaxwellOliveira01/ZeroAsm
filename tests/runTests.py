@@ -72,7 +72,7 @@ def run_test(path):
     if diff.returncode == 0:
         return (True, f"{BOLD}{GREEN}Accepted! :){RESET}")
     else:
-        return (False, f"{BOLD}{RED}Wrong Answer ;({RESET}. Diff:\n" + diff.stdout)
+        return (False, f"{BOLD}{RED}Wrong Answer ;({RESET}. Diff: {diff.stdout}, Program: {result.stdout}\n")
 
 
 extensions = ["asm", "pre", "obj"]
