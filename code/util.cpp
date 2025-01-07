@@ -169,6 +169,14 @@ void writeToFile(string path, string content) {
 
 }
 
+bool isNum(char c) {
+    return c >= '0' && c <= '9';
+}
+
+bool isLetter(char c) {
+    return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z');
+}
+
 bool isLabelNameValid(string label) {
     // cannot starts with a number
     if(label[0] >= '0' && label[0] <= '9') {
@@ -176,7 +184,7 @@ bool isLabelNameValid(string label) {
     }
 
     for(auto &c : label) { // if char is not a letter or number, it must be an underscore
-        if(!isalnum(c) && c != '_') {
+        if(!isNum(c) && !isLetter(c) && c != '_') {
             return false;
         }
     }
@@ -184,7 +192,7 @@ bool isLabelNameValid(string label) {
     return true;
 }
 
-bool isDecNumber(string number, int& value) { // Add tests!!!
+bool isDecNumber(string number, int& value) {
 
     if((int)number.size() == 0) {
         return false;
@@ -211,7 +219,7 @@ bool isDecNumber(string number, int& value) { // Add tests!!!
 
 }
 
-bool isHexNumber(string number, int& value) { // add TESTS!!!!
+bool isHexNumber(string number, int& value) {
 
     if((int)number.size() == 0) {
         return false;
