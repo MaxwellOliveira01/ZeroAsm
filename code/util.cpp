@@ -277,3 +277,26 @@ tuple<string, int> parseCommandArgumentShift(string argument) {
     return { label,  shift };
 
 }
+
+bool labelExists(string givenLabel, map<string, int>& symbolsTable) {
+
+    for(auto &[label, loc] : symbolsTable) {
+        if(toLower(label) == toLower(givenLabel)) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+int getLabelLocation(string givenLabel, map<string, int>& symbolsTable) {
+
+    for(auto &[label, loc] : symbolsTable) {
+        if(toLower(label) == toLower(givenLabel)) {
+            return loc;
+        }
+    }
+
+    return 0;
+
+}

@@ -383,7 +383,6 @@ struct PreProcessedText {
         applyMacros(lineTokensWithoutEmptyLabels);
 
         for(auto &line : lineTokensWithoutEmptyLabels) {
-            debug(line, buildLineStr(line));
             body.push_back(buildLineStr(line));
         }
 

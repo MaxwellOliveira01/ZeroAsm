@@ -93,7 +93,8 @@ struct Command { // abstract
 
     virtual string assemble(map<string, int> symbolsTable) {
         // COPY and STOP must override, the others are the same
-        return CommandOpcodes[type] + " " + to_string(symbolsTable[arg] + shift);
+        auto addr = getLabelLocation(arg, symbolsTable);
+        return CommandOpcodes[type] + " " + to_string(addr + shift);
     }
 
 }; 
@@ -207,7 +208,8 @@ struct CopyCommand : Command {
     }
 
     string assemble(map<string, int> symbolsTable) override {
-        return CommandOpcodes[type] + " " + to_string(symbolsTable[arg] + shift) + " " + to_string(symbolsTable[arg2] + shift2);
+        return CommandOpcodes[type] + " " + to_string(getLabelLocation(arg, symbolsTable) + shift) + " " 
+            + to_string(getLabelLocation(arg2, symbolsTable) + shift2);
     }
 
     string toString() override {

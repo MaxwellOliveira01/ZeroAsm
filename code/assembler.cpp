@@ -81,13 +81,15 @@ Program getProgram(PreProcessedData givenData, PreProcessedText givenText) {
         }
 
         for(auto &arg : args) {
-            if(symbolsTable.find(arg) == symbolsTable.end()) {
+
+            if(!labelExists(arg, symbolsTable)) {
                 showError("'" + arg + "' is not defined");
             } else {
                 // do we need to block the case of A + x, where A is CONST?
                 // do we need to block the case of A + 1, when A is just an label on text section?
                 // do we need to block the case of A + 10, when A is an label to SPACE 5?
             }
+            
         }
 
     }

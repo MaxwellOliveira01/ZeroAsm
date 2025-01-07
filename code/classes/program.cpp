@@ -99,7 +99,7 @@ struct Program {
             auto publicSymbols = vector<string>(text.publicLabels.begin(), text.publicLabels.end());
 
             sort(publicSymbols.begin(), publicSymbols.end(), [&](auto a, auto b) {
-                return s[a] < s[b];
+                return getLabelLocation(a, s) < getLabelLocation(b, s);
             });
 
             for(auto &x : publicSymbols) {
