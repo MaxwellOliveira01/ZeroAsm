@@ -11,14 +11,14 @@ struct Symbol {
     SymbolType type;
     string label;
     int address;
-    Symbol(char ch, string label, int address){
+    Symbol(char ch, string label_, int address_){
         if (ch == 'U') {
             this->type = uso;
         } else {
             this->type = def;
         };
-        this->label = label;
-        this->address = address;
+        this->label = label_;
+        this->address = address_;
     }
     string toString() const{
         string typeStr = (this->type == def) ? "def" : "uso";  
