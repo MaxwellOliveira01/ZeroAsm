@@ -174,7 +174,7 @@ struct Program {
                 auto directive = dir.get();
                 
                 for(int i = 0; i < directive->size(); i++) {
-                    res += " 1";
+                    res += " 0";
                 }
 
             }
