@@ -50,7 +50,7 @@ struct Program {
             if((int)command->label.size()) {
 
                 if(table.find(command->label) != table.end()) {
-                    showErrorAndExit("Label " + command->label + " already defined");
+                    showError("Label " + command->label + " already defined");
                 }
 
                 table[command->label] = currentPos;
@@ -63,7 +63,7 @@ struct Program {
             auto directive = directiveptr.get();
 
             if(table.find(directive->label) != table.end()) {
-                showErrorAndExit("Label " + directive->label + " already defined");
+                showError("Label " + directive->label + " already defined");
             }
 
             table[directive->label] = currentPos;
@@ -74,7 +74,7 @@ struct Program {
         for(auto &ext : text.externLabels) {
 
             if(table.find(ext) != table.end()) {
-                showErrorAndExit("Label " + ext + " already defined");
+                showError("Label " + ext + " already defined");
             }
 
             table[ext] = 0; // absolute 0

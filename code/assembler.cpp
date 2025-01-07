@@ -82,7 +82,7 @@ Program getProgram(PreProcessedData givenData, PreProcessedText givenText) {
 
         for(auto &arg : args) {
             if(symbolsTable.find(arg) == symbolsTable.end()) {
-                showErrorAndExit("'" + arg + "' is not defined");
+                showError("'" + arg + "' is not defined");
             } else {
                 // do we need to block the case of A + x, where A is CONST?
                 // do we need to block the case of A + 1, when A is just an label on text section?

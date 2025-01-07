@@ -51,12 +51,11 @@ bool hasLabel(vector<string> line) {
     return (int)line.size() >= 2 && line[1] == ":";
 }
 
-void showErrorAndExit(string message) {
+void showError(string message) {
     cout << message << "\n";
-    exit(-1);
 }
 
-void showErrorAndExit(string message, vector<string> tokens) {
+void showError(string message, vector<string> tokens) {
     cout << message << "\nTokens=[";
 
     for(int i = 0; i < (int)tokens.size(); i++) {
@@ -67,7 +66,6 @@ void showErrorAndExit(string message, vector<string> tokens) {
     }
 
     cout << "]\n";
-    exit(-1);
 }
 
 pair<string, string> parseFileName(string path) {
@@ -265,7 +263,7 @@ tuple<string, int> parseCommandArgumentShift(string argument) {
     string shiftStr = argument.substr(pos + 1);
 
     if(!isDecNumber(shiftStr, shift) || shift < 0) {
-        showErrorAndExit("Invalid shift value: " + shiftStr);
+        showError("Invalid shift value: " + shiftStr);
     }
 
     return { label,  shift };

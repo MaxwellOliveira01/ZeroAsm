@@ -47,7 +47,7 @@ struct Text {
                 if((int)pastLabels.size()) {
                     // Bringing an label of an empty line to current line would make 
                     // it invalid (more than one label in a row)
-                    showErrorAndExit("More than one label in a row: " + pastLabels + " and " + line[0]);
+                    showError("More than one label in a row: " + pastLabels + " and " + line[0]);
                 } else {
                     label = line[0];
                     line = split(line, 2, (int)line.size());
@@ -60,7 +60,7 @@ struct Text {
                     // Already removed label from line, but we need to check for another one
                     
                     if(hasLabel(line)) {
-                        showErrorAndExit("More than one label in a row: " + label + " and " + line[0]);
+                        showError("More than one label in a row: " + label + " and " + line[0]);
                     }
 
                 }
@@ -73,10 +73,10 @@ struct Text {
 
             if((int)line.size() && toLower(line[0]) == "begin") {
                 if(hasBegin) {
-                    showErrorAndExit("Module has more than one begin");
+                    showError("Module has more than one begin");
                 }
                 if(!(int)label.size()) {
-                    showErrorAndExit("Module must have an non empty label");
+                    showError("Module must have an non empty label");
                 }
                 hasBegin = true;
                 moduleName = label;
@@ -85,7 +85,7 @@ struct Text {
 
             if((int)line.size() && toLower(line[0]) == "end") {
                 if(hasEnd) {
-                    showErrorAndExit("Module has more than one end");
+                    showError("Module has more than one end");
                 }
                 hasEnd = true;
                 continue;
@@ -93,7 +93,7 @@ struct Text {
 
             if((int)line.size() && toLower(line[0]) == "extern") {
                 if(!(int)label.size()) {
-                    showErrorAndExit("Extern must have an non empty label");
+                    showError("Extern must have an non empty label");
                 }
                 externLabels.insert(label);
                 continue;
@@ -101,7 +101,7 @@ struct Text {
 
             if((int)line.size() && toLower(line[0]) == "public") {
                 if((int)line.size() != 2) {
-                    showErrorAndExit("Public field must exactly one field after", line);
+                    showError("Public field must have exactly one field after, it will be ignored", line);
                 }
                 publicLabels.insert(line[1]);
                 continue;
@@ -117,9 +117,9 @@ struct Text {
         }
 
         if(hasBegin && !hasEnd) {
-            showErrorAndExit("Module has begin, but doenst have end");
+            showError("Module has begin, but doenst have end");
         } else if(!hasBegin && hasEnd) {
-            showErrorAndExit("Module has end, but doesnt have begin");
+            showError("Module has end, but doesnt have begin");
         }
 
         // if((int)pastLabels.size()) {
@@ -131,14 +131,15 @@ struct Text {
     shared_ptr<Command> ValidateAndCreateClassObj(string label, vector<string> line) {
 
         if((int)label.size() && !isLabelNameValid(label)) {
-            showErrorAndExit("Invalid label name: '" + label + "'");
-            return nullptr; // unreachable
+            showError("Invalid label name: '" + label + "', it will be ignored", line);
+            return nullptr;
         }
 
         if(AddCommand::IsAddCommand(line)) {
 
             if((int)line.size() != Command::size(CommandType::Add)) {
-                showErrorAndExit("Invalid number of arguments", line);
+                showError("Invalid number of arguments, it will be ignored", line);
+                return nullptr;
             }
 
             return make_shared<AddCommand>(label, line[1]);
@@ -147,7 +148,8 @@ struct Text {
         if(SubCommand::IsSubCommand(line)) {
 
             if((int)line.size() != Command::size(CommandType::Sub)) {
-                showErrorAndExit("Invalid number of arguments", line);
+                showError("Invalid number of arguments, it will be ignored", line);
+                return nullptr;
             }
 
             return make_shared<SubCommand>(label, line[1]);
@@ -156,7 +158,8 @@ struct Text {
         if(MultCommand::IsMultCommand(line)) {
 
             if((int)line.size() != Command::size(CommandType::Mult)) {
-                showErrorAndExit("Invalid number of arguments", line);
+                showError("Invalid number of arguments, it will be ignored", line);
+                return nullptr;
             }
 
             return make_shared<MultCommand>(label, line[1]);
@@ -165,7 +168,8 @@ struct Text {
         if(DivCommand::IsDivCommand(line)) {
 
             if((int)line.size() != Command::size(CommandType::Div)) {
-                showErrorAndExit("Invalid number of arguments", line);
+                showError("Invalid number of arguments, it will be ignored", line);
+                return nullptr;
             }
 
             return make_shared<DivCommand>(label, line[1]);
@@ -174,7 +178,8 @@ struct Text {
         if(JmpCommand::IsJmpCommand(line)) {
 
             if((int)line.size() != Command::size(CommandType::Jmp)) {
-                showErrorAndExit("Invalid number of arguments", line);
+                showError("Invalid number of arguments, it will be ignored", line);
+                return nullptr;
             }
 
             return make_shared<JmpCommand>(label, line[1]);
@@ -183,7 +188,8 @@ struct Text {
         if(JmpnCommand::IsJmpnCommand(line)) {
             
             if((int)line.size() != Command::size(CommandType::Jmpn)) {
-                showErrorAndExit("Invalid number of arguments", line);
+                showError("Invalid number of arguments, it will be ignored", line);
+                return nullptr;
             }
 
             return make_shared<JmpnCommand>(label, line[1]);
@@ -192,7 +198,8 @@ struct Text {
         if(JmppCommand::IsJmppCommand(line)) {
             
             if((int)line.size() != Command::size(CommandType::Jmpp)) {
-                showErrorAndExit("Invalid number of arguments", line);
+                showError("Invalid number of arguments, it will be ignored", line);
+                return nullptr;
             }
 
             return make_shared<JmppCommand>(label, line[1]);
@@ -201,7 +208,8 @@ struct Text {
         if(JmpzCommand::IsJmpzCommand(line)) {
             
             if((int)line.size() != Command::size(CommandType::Jmpz)) {
-                showErrorAndExit("Invalid number of arguments", line);
+                showError("Invalid number of arguments, it will be ignored", line);
+                return nullptr;
             }
 
             return make_shared<JmpzCommand>(label, line[1]);
@@ -210,7 +218,8 @@ struct Text {
         if(CopyCommand::IsCopyCommand(line)) {
             
             if((int)line.size() != Command::size(CommandType::Copy) + 1 /* comma after arg1 */) {
-                showErrorAndExit("Invalid number of arguments", line);
+                showError("Invalid number of arguments, it will be ignored", line);
+                return nullptr;
             }
 
             return make_shared<CopyCommand>(label, line[1], line[3]);
@@ -219,7 +228,8 @@ struct Text {
         if(LoadCommand::isLoadCommand(line)) {
             
             if((int)line.size() != Command::size(CommandType::Load)) {
-                showErrorAndExit("Invalid number of arguments", line);
+                showError("Invalid number of arguments, it will be ignored", line);
+                return nullptr;
             }
 
             return make_shared<LoadCommand>(label, line[1]);
@@ -228,7 +238,8 @@ struct Text {
         if(StoreCommand::isStoreCommand(line)) {
             
             if((int)line.size() != Command::size(CommandType::Store)) {
-                showErrorAndExit("Invalid number of arguments", line);
+                showError("Invalid number of arguments, it will be ignored", line);
+                return nullptr;
             }
 
             return make_shared<StoreCommand>(label, line[1]);
@@ -237,7 +248,8 @@ struct Text {
         if(InputCommand::isInputCommand(line)) {
             
             if((int)line.size() != Command::size(CommandType::Input)) {
-                showErrorAndExit("Invalid number of arguments", line);
+                showError("Invalid number of arguments, it will be ignored", line);
+                return nullptr;
             }
 
             return make_shared<InputCommand>(label, line[1]);
@@ -246,7 +258,8 @@ struct Text {
         if(OutputCommand::isOutputCommand(line)) {
             
             if((int)line.size() != Command::size(CommandType::Output)) {
-                showErrorAndExit("Invalid number of arguments", line);
+                showError("Invalid number of arguments, it will be ignored", line);
+                return nullptr;
             }
 
             return make_shared<OutputCommand>(label, line[1]);
@@ -255,14 +268,15 @@ struct Text {
         if(StopCommand::isStopCommand(line)) {
             
             if((int)line.size() != Command::size(CommandType::Stop)) {
-                showErrorAndExit("Invalid number of arguments", line);
+                showError("Invalid number of arguments, it will be ignored", line);
+                return nullptr;
             }
 
             return make_shared<StopCommand>(label);
         }
 
-        showErrorAndExit("Invalid instruction", line);
-        return nullptr; // unreachable
+        showError("Invalid instruction, it will be ignored", line);
+        return nullptr;
 
     }
 

@@ -39,7 +39,7 @@ int main(int argc, char *argv[]) {
         }
 
     } else {
-        showErrorAndExit("Invalid file extension, it must be .asm or .pre");
+        showError("Invalid file extension, it must be .asm or .pre");
     }
 
     return 0;

@@ -79,7 +79,7 @@ array<int, 4> getTextAndDataSectionIndexes(vector<string>& file) {
     }
 
     if(dataSectionStartIndex == -1 || textSectionStartIndex == -1) {
-        showErrorAndExit("Data or text section not found");
+        showError("Data or text section not found");
     }
 
     int dataSectionEndIndex = -1, textSectionEndIndex = -1;

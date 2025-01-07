@@ -25,7 +25,11 @@ struct Data {
                 continue;
             }
 
-            directives.push_back(ValidateAndCreateClassObj(line));
+            auto tmp = ValidateAndCreateClassObj(line);
+
+            if(tmp != nullptr) {
+                directives.push_back(tmp);
+            }
 
         }
     }
@@ -33,12 +37,12 @@ struct Data {
     shared_ptr<Directives> ValidateAndCreateClassObj(vector<string> tokens) {
 
         if(!hasLabel(tokens)) {
-            showErrorAndExit("Data section must have a label", tokens);
+            // showError("Data section must have a label", tokens);
             return nullptr; // unreachable
         }
 
-        if(!isLabelNameValid(tokens[0])) {
-            showErrorAndExit("Invalid label name: " + tokens[0], tokens);
+        if(hasLabel(tokens) && !isLabelNameValid(tokens[0])) {
+            showError("Invalid label name: " + tokens[0], tokens);
             return nullptr; // unreachable
         }
 
@@ -48,7 +52,7 @@ struct Data {
 
             if(!isHexNumber(tokens.back(), value)) { // add tests!!
                 if(!isDecNumber(tokens.back(), value)) {
-                    showErrorAndExit("Invalid const directive value", tokens);
+                    showError("Invalid const directive value, it will be ignored", tokens);
                     return nullptr; // unreachable
                 }
             }
@@ -64,10 +68,10 @@ struct Data {
                 int value = 0;
 
                 if(!isDecNumber(tokens.back(), value)) {
-                    showErrorAndExit("Invalid space directive value", tokens);
+                    showError("Invalid space directive value, it will be ignored", tokens);
                     return nullptr; // unreachable
                 } else if(value <= 0) {
-                    showErrorAndExit("Space directive value must be greater than 0", tokens);
+                    showError("Space directive value must be greater than 0, it will be ignored", tokens);
                     return nullptr; // unreachable
                 }
 
@@ -75,7 +79,7 @@ struct Data {
             }
 
         } else {
-            showErrorAndExit("Invalid directive at data section", tokens);
+            showError("Invalid directive at data section, it will be ignored", tokens);
             return nullptr; // unreachable
         }
     }

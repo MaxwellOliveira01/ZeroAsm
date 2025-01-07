@@ -47,20 +47,22 @@ def get_test_expected_output_path(path):
 def run_test(path):
 
     result = subprocess.run(["./../montador", path], capture_output=True, text=True)
+    
+    test_expected_output_path = get_test_expected_output_path(path)
+    
+    program_generated_output_path = "./" + test_expected_output_path.split('/')[-1] # same name, but on root folder
 
     if result.returncode != 0:
+        os.remove(program_generated_output_path)
         if test_has_output(path):
-            return (False, "{BOLD}{RED}Runtime error{RESET}, couldnt check output. Output: " + result.stderr)
+            return (False, f"{BOLD}{RED}Runtime error{RESET}, couldnt check output. Output: " + result.stderr)
         return (True, f"{BOLD}{GREEN}Accepted{RESET} (get an error as expected)")
     
     if not test_has_output(path):
-        return (True, "f{BOLD}{GREEN}Accepted{RESET}, no output to check")
-    
-    test_expected_output_path = get_test_expected_output_path(path)
+        os.remove(program_generated_output_path)
+        return (True, f"{BOLD}{GREEN}Accepted{RESET}, no output file expected. Output:\n" + result.stdout)
 
     assert(os.path.exists(test_expected_output_path))
-
-    program_generated_output_path = "./" + test_expected_output_path.split('/')[-1] # same name, but on root folder
 
     diff = subprocess.run(["diff", test_expected_output_path, program_generated_output_path],
                         capture_output=True, text=True)
