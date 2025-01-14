@@ -18,7 +18,7 @@ struct Program {
     Text text;
 
     Program(Data data_, Text text_): data(data_), text(text_) {
-        auto _ = createSymbolsTable(); // just to check perform some validations
+        auto _ = createSymbolsTable(true); // just to check perform some validations
     };
 
     string assemble() {
@@ -40,7 +40,7 @@ struct Program {
         return result;
     }
 
-    map<string, int> createSymbolsTable() {
+    map<string, int> createSymbolsTable(bool showErrors = false) {
         map<string, int> table;
         int currentPos = 0;
 
@@ -49,7 +49,7 @@ struct Program {
 
             if((int)command->label.size()) {
 
-                if(table.find(command->label) != table.end()) {
+                if(showErrors && table.find(command->label) != table.end()) {
                     showError("Label " + command->label + " already defined");
                 }
 
@@ -62,7 +62,7 @@ struct Program {
         for(auto &directiveptr: data.directives) {
             auto directive = directiveptr.get();
 
-            if(table.find(directive->label) != table.end()) {
+            if(showErrors && table.find(directive->label) != table.end()) {
                 showError("Label " + directive->label + " already defined");
             }
 
@@ -73,7 +73,7 @@ struct Program {
 
         for(auto &ext : text.externLabels) {
 
-            if(table.find(ext) != table.end()) {
+            if(showErrors && table.find(ext) != table.end()) {
                 showError("Label " + ext + " already defined");
             }
 
