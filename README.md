@@ -1,8 +1,10 @@
 # Software Básico
 O trabalho desenvolvido tem como objetivo o desenvolvimento de um montador e um ligador para uma linguagem Assembly genérica e para fins educacionais. Todo o código se encontra na pasta 'code' além de dois arquivos (montador.cpp e ligador.cpp) que se encontram fora que só geram o montador e o ligador. 
 
+Todos os codigos foram criados, testados e executados no ambiente Linux (Ubuntu 22)
+
 ## Como compilar
-Junto aos arquivos está um arquivo de makefile, entao basta executar um comando "make" e ele irá compilar tanto o ligador quanto o montador.
+Junto aos arquivos está um makefile, entao basta executar um comando "make" e ele irá compilar tanto o ligador quanto o montador.
 
 ## Como utilizar?
 Após compilar, há dois arquivos que podem ser executados: 'montador' e 'ligador'.
