@@ -152,20 +152,19 @@ struct Program {
                     continue;
                 }
 
-                if(text.externLabels.count(command->arg)) {
-                    res += " 0";
-                } else {
-                    res += " 1";
-                }
+                /*
+                    There are two cases:
+                        - If the arg is public or is declared on Data Section, it must be 1
+                        - If the arg is an extern, it must be 1 too
+                    
+                    So, we can always append 1 for non-command entries
+                */
+
+                res += " 1";
 
                 if(command->type == CommandType::Copy) {
-                    auto cpy = dynamic_cast<CopyCommand*>(command);
-
-                    if(text.externLabels.count(cpy->arg2)) {
-                        res += " 0";
-                    } else {
-                        res += " 1";
-                    }   
+                    // auto cpy = dynamic_cast<CopyCommand*>(command);
+                    res += " 1";
                 }
 
             }
