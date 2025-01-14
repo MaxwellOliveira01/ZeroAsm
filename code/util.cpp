@@ -221,30 +221,35 @@ bool isDecNumber(string number, int& value) {
 
 bool isHexNumber(string number, int& value) {
 
-    if((int)number.size() == 0) {
+    // number is in two complement form for 16 bits
+
+    if((int)number.size() == 0 || number.substr(0, 2) != "0x") {
         return false;
     }
 
-    bool neg = false;
+    number = number.substr(2); // removing 0x
 
-    if(number[0] == '-') {
-        neg = true;
-        number = number.substr(1);
-    }
+    while((int)number.size() != 4) // padding left number 
+        number = "0" + number;
 
-    if((int)number.size() < 3 || number[0] != '0' || tolower(number[1]) != 'x') {
-        return false;
-    }
-
-    number = number.substr(2);
+    unsigned int tmp = 0;
 
     try {
-        value = stoi(number, 0, 16);
-        if(neg) value = -value;
-        return true;
+        tmp = stoul(number, 0, 16);
     } catch(...) {
         return false;
     }
+
+    auto b = 4 * ((int)number.size()); // 4 bits per hex digit
+
+    if(tmp & (1 << (b - 1))) {
+        // is negative
+        tmp = tmp - (1 << b);
+    }
+
+    value = (int)tmp;
+
+    return true;
 
 }
 
