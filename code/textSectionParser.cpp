@@ -69,18 +69,18 @@ struct Text {
                 pastLabels = "";
             }
 
-            //MOD1: BEGIN
+            // BEGIN: MOD1
 
-            if((int)line.size() && toLower(line[0]) == "begin") {
+            if((int)label.size() && toLower(label) == "begin") {
+
                 if(hasBegin) {
                     showError("Module has more than one begin");
                 }
-                if(!(int)label.size()) {
-                    showError("Module must have an non empty label");
-                }
+
                 hasBegin = true;
-                moduleName = label;
+                moduleName = (int)line.size() ? line[0] : "";
                 continue;
+
             }
 
             if((int)line.size() && toLower(line[0]) == "end") {
@@ -281,7 +281,7 @@ struct Text {
     }
 
     bool isAnModule() {
-        return (int)moduleName.size() > 0;
+        return hasBegin && hasEnd;
     }
 
     string toString() {
