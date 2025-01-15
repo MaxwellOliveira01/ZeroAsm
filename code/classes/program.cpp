@@ -111,23 +111,29 @@ struct Program {
 
             vector<pair<string, int>> externSymbols;
 
+            auto f = [&](string label) -> bool {
+                for(auto &l : text.externLabels) {
+                    if(toLower(l) == toLower(label)) {
+                        return true;
+                    }
+                }
+                return false;
+            };
+
             int currentPos = 0;
 
             for(auto &cmdpointer: text.commands) {
                 auto command = cmdpointer.get();
 
-                if(text.externLabels.find(command->arg) != text.externLabels.end()) {
-                    externSymbols.push_back({command->arg, currentPos + 1});
-                }
+                vector<string> args = { command->arg };
 
                 if(command->type == CommandType::Copy) {
                     auto cpy = dynamic_cast<CopyCommand*>(command);
+                    args.push_back(cpy->arg2);
+                }
 
-                    if(text.externLabels.find(cpy->arg2) != text.externLabels.end()) {
-                        externSymbols.push_back({cpy->arg2, currentPos + 2});
-
-                    }
-
+                for(int k = 0; k < (int)args.size(); k++) if(f(args[k])) {
+                    externSymbols.push_back(make_pair(args[k], currentPos + k + 1));
                 }
                 
                 currentPos += command->size();
