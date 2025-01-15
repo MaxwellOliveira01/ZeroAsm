@@ -33,7 +33,13 @@ struct ConstDirective : Directives {
     }
 
     static bool isConstDirective(vector<string> line) {
-        return (int)line.size() == 4 && toLower(line[2]) == "const";
+        for(auto &x : line) {
+            if(toLower(x) == "const") {
+                return true;
+            }
+        }
+        return false;
+        // return (int)line.size() == 4 && toLower(line[2]) == "const";
     }
 
     string assemble() override {
@@ -59,8 +65,17 @@ struct SpaceDirective : Directives {
     }
 
     static bool isSpaceDirective(vector<string> line) {
-        return ((int)line.size() == 3 || (int)line.size() == 4) 
-            && toLower(line[2]) == "space";
+
+        for(auto &x : line) {
+            if(toLower(x) == "space") {
+                return true;
+            }
+        }
+
+        return false;
+
+        // return ((int)line.size() == 3 || (int)line.size() == 4) 
+        //     && toLower(line[2]) == "space";
     }
 
 

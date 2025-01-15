@@ -36,24 +36,23 @@ struct Data {
 
     shared_ptr<Directives> ValidateAndCreateClassObj(vector<string> tokens) {
 
-        if(!hasLabel(tokens)) {
-            // showError("Data section must have a label", tokens);
-            return nullptr; // unreachable
-        }
+        // if(!hasLabel(tokens)) {
+        //     // showError("Data section must have a label", tokens);
+        //     return nullptr; // unreachable
+        // }
 
         if(hasLabel(tokens) && !isLabelNameValid(tokens[0])) {
             showError("Invalid label name: " + tokens[0], tokens);
-            return nullptr; // unreachable
         }
 
         if(ConstDirective::isConstDirective(tokens)) {
             
             int value = 0;
 
-            if(!isHexNumber(tokens.back(), value)) { // add tests!!
+            if(!isHexNumber(tokens.back(), value)) {
                 if(!isDecNumber(tokens.back(), value)) {
-                    showError("Invalid const directive value, it will be ignored", tokens);
-                    return nullptr; // unreachable
+                    showError("Invalid const directive value, it will be set to 0", tokens);
+                    value = 0;
                 }
             }
 
@@ -68,11 +67,10 @@ struct Data {
                 int value = 0;
 
                 if(!isDecNumber(tokens.back(), value)) {
-                    showError("Invalid space directive value, it will be ignored", tokens);
-                    return nullptr; // unreachable
+                    showError("Invalid space directive value, it will be set to 0", tokens);
+                    value = 0;
                 } else if(value <= 0) {
-                    showError("Space directive value must be greater than 0, it will be ignored", tokens);
-                    return nullptr; // unreachable
+                    showError("Space directive value must be greater than 0", tokens);
                 }
 
                 return make_unique<SpaceDirective>(tokens[0], value);
