@@ -16,6 +16,11 @@ Por exemplo: ./montador teste1.asm
 O ligador, por outro lado, espera receber dois argumentos via linha de comando e sua saída sempre é a geração de um arquivo .obj
 Por exemplo: ./ligador codigo_1.obj codigo_2.obj
 
+## Testes
+
+Para garantir a corretude do programa, foram criados uma serie de casos de testes e um script em python que roda automaticamente todos eles e verifica se a
+saida está como o esperado. Isso pode ser conferido na pasta '/tests'
+
 ## Autores
 
 Maxwell Oliveira dos Reis - 221002100
