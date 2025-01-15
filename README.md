@@ -9,17 +9,12 @@ Junto aos arquivos está um makefile, entao basta executar um comando "make" e e
 ## Como utilizar?
 Após compilar, há dois arquivos que podem ser executados: 'montador' e 'ligador'.
 
-O montador é executado da seguinte maneira:
-```bash
-    ./montador <input>
-```
-Onde <input> seria um arquivo '.asm' ou '.pre'. A saída do montador pode ser do tipo '.pre' ou '.obj', a depender do conteudo do arquivo.
+O montador espera receber o caminho de um arquivo (.asm ou .pre) via argumento na linha de comando.
+A saída será a geração de um arquivo .pre ou .obj, a depender do tipo de arquivo da entrada
+Por exemplo: ./montador teste1.asm
 
-O ligador é executado da seguinte maneira:
-```bash
-    ./ligador codigo_1.obj codigo_2.obj
-```
-Onde 'codigo_1.obj' e 'codigo_2.obj' são objetos já montados e com toda a informação necessaria para sua ligação, importante mencionar que os arquivos devem estar em ordem. A saída do ligador é um arquivo de nome 'prog1.e', composto por somente o código montado já ligado.
+O ligador, por outro lado, espera receber dois argumentos via linha de comando e sua saída sempre é a geração de um arquivo .obj
+Por exemplo: ./ligador codigo_1.obj codigo_2.obj
 
 ## Autores
 
