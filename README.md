@@ -3,6 +3,8 @@ O trabalho desenvolvido tem como objetivo o desenvolvimento de um montador e um 
 
 Todos os codigos foram criados, testados e executados no ambiente Linux (Ubuntu 22)
 
+Para evitar ambiguidade na operação de multiplicação, optamos por usar como "Mult"
+
 ## Como compilar
 Junto aos arquivos está um makefile, entao basta executar um comando "make" e ele irá compilar tanto o ligador quanto o montador.
 
@@ -16,12 +18,11 @@ Por exemplo: ./montador teste1.asm
 O ligador, por outro lado, espera receber dois argumentos via linha de comando e sua saída sempre é a geração de um arquivo .obj
 Por exemplo: ./ligador codigo_1.obj codigo_2.obj
 
-mult
-
 ## Testes
 
-Para garantir a corretude do programa, foram criados uma serie de casos de testes e um script em python que roda automaticamente todos eles e verifica se a
-saida está como o esperado. Isso pode ser conferido na pasta '/tests'
+Para garantir a corretude do programa, foram criados uma serie de casos de testes e um script em python que roda automaticamente a maioria deles e testa se 
+saida está como o esperado. Isso pode ser conferido na pasta '/tests'.
+Há outros pastas de testes, como a 'tests_e2e' cuja ideia seria testar um codigo do começo do fim e simular o resultado e a 'tests_ligador'
 
 ## Autores
 
