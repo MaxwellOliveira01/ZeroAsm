@@ -223,14 +223,11 @@ bool isHexNumber(string number, int& value) {
 
     // number is in two complement form for 16 bits
 
-    if((int)number.size() == 0 || number.substr(0, 2) != "0x") {
+    if((int)number.size() == 0 || toLower(number.substr(0, 2)) != "0x") {
         return false;
     }
 
     number = number.substr(2); // removing 0x
-
-    while((int)number.size() != 4) // padding left number 
-        number = "0" + number;
 
     unsigned int tmp = 0;
 

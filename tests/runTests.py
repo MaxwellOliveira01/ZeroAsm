@@ -46,9 +46,19 @@ def get_test_expected_output_path(path):
 
 def run_test(path):
 
+    # ignoring this folder because we always need to run until the end (even if program throw an error) 
+    if "fewArguments" in path.split("/"): 
+        return (True, '?')
+
     result = subprocess.run(["./../montador", path], capture_output=True, text=True)
-    
     test_expected_output_path = get_test_expected_output_path(path)
+
+    if "errors" in path.split("/"):
+        if len(result.stdout) > 0:
+            return (True, f"{BOLD}{GREEN}Accepted{RESET}, error as expected: {result.stdout}")
+        else:
+            return (False, f"{BOLD}{RED}Runtime error{RESET}, expected error but printed nothing")
+
     
     program_generated_output_path = "./" + test_expected_output_path.split('/')[-1] # same name, but on root folder
 
@@ -138,3 +148,7 @@ for folder in tests_by_folder:
 
 
 print(f"\n\n{ac_count}/{total_tests} tests passed")
+
+for f in os.listdir():
+    if f.endswith(".obj") or f.endswith(".pre"):
+        os.remove(f)

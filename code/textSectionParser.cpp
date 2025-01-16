@@ -139,7 +139,6 @@ struct Text {
 
             if((int)line.size() != Command::size(CommandType::Add)) {
                 showError("Invalid number of arguments, it will be ignored", line);
-                return nullptr;
             }
 
             return make_shared<AddCommand>(label, line[1]);
@@ -149,7 +148,6 @@ struct Text {
 
             if((int)line.size() != Command::size(CommandType::Sub)) {
                 showError("Invalid number of arguments, it will be ignored", line);
-                return nullptr;
             }
 
             return make_shared<SubCommand>(label, line[1]);
@@ -159,7 +157,6 @@ struct Text {
 
             if((int)line.size() != Command::size(CommandType::Mult)) {
                 showError("Invalid number of arguments, it will be ignored", line);
-                return nullptr;
             }
 
             return make_shared<MultCommand>(label, line[1]);
@@ -169,7 +166,6 @@ struct Text {
 
             if((int)line.size() != Command::size(CommandType::Div)) {
                 showError("Invalid number of arguments, it will be ignored", line);
-                return nullptr;
             }
 
             return make_shared<DivCommand>(label, line[1]);
@@ -179,7 +175,6 @@ struct Text {
 
             if((int)line.size() != Command::size(CommandType::Jmp)) {
                 showError("Invalid number of arguments, it will be ignored", line);
-                return nullptr;
             }
 
             return make_shared<JmpCommand>(label, line[1]);
@@ -189,7 +184,6 @@ struct Text {
             
             if((int)line.size() != Command::size(CommandType::Jmpn)) {
                 showError("Invalid number of arguments, it will be ignored", line);
-                return nullptr;
             }
 
             return make_shared<JmpnCommand>(label, line[1]);
@@ -199,7 +193,6 @@ struct Text {
             
             if((int)line.size() != Command::size(CommandType::Jmpp)) {
                 showError("Invalid number of arguments, it will be ignored", line);
-                return nullptr;
             }
 
             return make_shared<JmppCommand>(label, line[1]);
@@ -209,7 +202,6 @@ struct Text {
             
             if((int)line.size() != Command::size(CommandType::Jmpz)) {
                 showError("Invalid number of arguments, it will be ignored", line);
-                return nullptr;
             }
 
             return make_shared<JmpzCommand>(label, line[1]);
@@ -219,7 +211,6 @@ struct Text {
             
             if((int)line.size() != Command::size(CommandType::Copy) + 1 /* comma after arg1 */) {
                 showError("Invalid number of arguments, it will be ignored", line);
-                return nullptr;
             }
 
             return make_shared<CopyCommand>(label, line[1], line[3]);
@@ -229,7 +220,6 @@ struct Text {
             
             if((int)line.size() != Command::size(CommandType::Load)) {
                 showError("Invalid number of arguments, it will be ignored", line);
-                return nullptr;
             }
 
             return make_shared<LoadCommand>(label, line[1]);
@@ -239,7 +229,6 @@ struct Text {
             
             if((int)line.size() != Command::size(CommandType::Store)) {
                 showError("Invalid number of arguments, it will be ignored", line);
-                return nullptr;
             }
 
             return make_shared<StoreCommand>(label, line[1]);
@@ -249,7 +238,6 @@ struct Text {
             
             if((int)line.size() != Command::size(CommandType::Input)) {
                 showError("Invalid number of arguments, it will be ignored", line);
-                return nullptr;
             }
 
             return make_shared<InputCommand>(label, line[1]);
@@ -259,7 +247,6 @@ struct Text {
             
             if((int)line.size() != Command::size(CommandType::Output)) {
                 showError("Invalid number of arguments, it will be ignored", line);
-                return nullptr;
             }
 
             return make_shared<OutputCommand>(label, line[1]);
@@ -269,7 +256,6 @@ struct Text {
             
             if((int)line.size() != Command::size(CommandType::Stop)) {
                 showError("Invalid number of arguments, it will be ignored", line);
-                return nullptr;
             }
 
             return make_shared<StopCommand>(label);
@@ -281,7 +267,7 @@ struct Text {
     }
 
     bool isAnModule() {
-        return hasBegin && hasEnd;
+        return hasBegin || hasEnd;
     }
 
     string toString() {
