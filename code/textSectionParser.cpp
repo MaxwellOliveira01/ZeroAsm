@@ -328,11 +328,9 @@ struct Macro {
 struct PreProcessedText {
 
     vector<string> body;   
-    map<string, Macro> macrosTable;
 
-    // vector<Macro> macros;
-    // vector<string> mnt; // macro name table
-    // vector<string> mdt; // macro definition table
+    map<string, int> MNT; // macro name table: macro name -> index in MDT
+    vector<Macro> MDT; // macro definition table: macro index -> macro
 
     PreProcessedText() = default;
 
@@ -403,7 +401,8 @@ struct PreProcessedText {
                 macroBody.push_back(lineTokens[j]);
             }
 
-            macrosTable[name] = Macro(name, args, macroBody);
+            MNT[name] = (int)MDT.size();
+            MDT.push_back(Macro(name, args, macroBody));
 
             i = j; // skip macro lines
         }
@@ -424,16 +423,16 @@ struct PreProcessedText {
                 all depedencies will be solved. This algorithm use the ideia of BellmanFord algorithm to find shortest path
         */
 
-        for(int k = 0; k < (int)macrosTable.size() + 1; k++) {
+        for(int k = 0; k < (int)MNT.size() + 1; k++) {
 
             vector<vector<string>> newLines;
 
             for(auto &line : lines) {
                 int p = hasLabel(line) ? 2 : 0;
 
-                if(p < (int)line.size() && macrosTable.count(line[p])) {
+                if(p < (int)line.size() && MNT.count(line[p])) {
                     // get the arguments and apply the macro
-                    auto macro = macrosTable[line[p]];
+                    auto macro = MDT[MNT[line[p]]];
                     auto args = split(line, p + 1, (int)line.size());
                     auto appliedMacro = macro.apply(args); 
                     newLines.insert(newLines.end(), appliedMacro.begin(), appliedMacro.end());
